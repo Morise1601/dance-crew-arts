@@ -85,7 +85,7 @@ export default function HomeClient({ founderImg, members: initialMembers }: Home
                     className="absolute inset-0 z-0"
                 >
                     <Image
-                        src="/banner.png"
+                        src="https://rolytezucilbvtcbrjbx.supabase.co/storage/v1/object/public/Others/Banner.png"
                         alt="D'Art Crew Hero"
                         fill
                         className="object-contain object-center"
