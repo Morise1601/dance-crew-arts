@@ -124,7 +124,7 @@ export default function AppSettingsForm({ initialSettings }: AppSettingsFormProp
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        
+
         if (!validateEmails()) {
             setError("One or more email addresses are invalid.")
             return
@@ -193,7 +193,7 @@ export default function AppSettingsForm({ initialSettings }: AppSettingsFormProp
             <div className="space-y-6">
                 <div className="flex items-center gap-3">
                     <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                    <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">Branding Identity</h2>
+                    <h2 className="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-400">Branding Identity</h2>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
@@ -208,7 +208,7 @@ export default function AppSettingsForm({ initialSettings }: AppSettingsFormProp
                             <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                 <div className="text-center">
                                     <Upload className="w-5 h-5 text-primary mx-auto mb-1" />
-                                    <span className="text-[8px] font-black text-white uppercase tracking-widest">Click to Change</span>
+                                    <span className="text-[8px] font-bold text-white uppercase tracking-widest">Click to Change</span>
                                 </div>
                             </div>
                             <input name="logo" type="file" accept="image/*" onChange={handleFileChange} className="absolute inset-0 opacity-0 cursor-pointer" title="Upload Application Logo" />
@@ -231,7 +231,7 @@ export default function AppSettingsForm({ initialSettings }: AppSettingsFormProp
             <div className="space-y-8 pt-6 border-t border-white/5">
                 <div className="flex items-center gap-3">
                     <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                    <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">Leadership Visuals</h2>
+                    <h2 className="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-400">Leadership Visuals</h2>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
@@ -248,7 +248,7 @@ export default function AppSettingsForm({ initialSettings }: AppSettingsFormProp
                                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                     <div className="text-center">
                                         <Upload className="w-5 h-5 text-primary mx-auto mb-1" />
-                                        <span className="text-[8px] font-black text-white uppercase tracking-widest">Update</span>
+                                        <span className="text-[8px] font-bold text-white uppercase tracking-widest">Update</span>
                                     </div>
                                 </div>
                                 <input name="founder" type="file" accept="image/*" onChange={handleFileChange} className="absolute inset-0 opacity-0 cursor-pointer" title="Upload Founder Image" />
@@ -283,7 +283,7 @@ export default function AppSettingsForm({ initialSettings }: AppSettingsFormProp
                                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                     <div className="text-center">
                                         <Upload className="w-5 h-5 text-primary mx-auto mb-1" />
-                                        <span className="text-[8px] font-black text-white uppercase tracking-widest">Update</span>
+                                        <span className="text-[8px] font-bold text-white uppercase tracking-widest">Update</span>
                                     </div>
                                 </div>
                                 <input name="coFounder" type="file" accept="image/*" onChange={handleFileChange} className="absolute inset-0 opacity-0 cursor-pointer" title="Upload Co-Founder Image" />
@@ -311,7 +311,7 @@ export default function AppSettingsForm({ initialSettings }: AppSettingsFormProp
             <div className="space-y-8 pt-6 border-t border-white/5">
                 <div className="flex items-center gap-3">
                     <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                    <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">Discovery Details</h2>
+                    <h2 className="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-400">Discovery Details</h2>
                 </div>
 
                 <div className="grid grid-cols-1 gap-10">
@@ -320,11 +320,11 @@ export default function AppSettingsForm({ initialSettings }: AppSettingsFormProp
                         <Label className="text-[9px] font-bold uppercase tracking-widest text-gray-500 ml-1">Foundation Address</Label>
                         <div className="relative group max-w-2xl">
                             <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-primary transition-colors" />
-                            <Input 
-                                name="founder_address" 
+                            <Input
+                                name="founder_address"
                                 value={address}
                                 onChange={(e) => setAddress(e.target.value)}
-                                placeholder="HQ - Studio Address" 
+                                placeholder="HQ - Studio Address"
                                 className="bg-white/[0.02] border-white/10 pl-12 h-12 rounded-xl text-[11px] focus:ring-primary/20 transition-all font-medium"
                             />
                         </div>
@@ -335,8 +335,8 @@ export default function AppSettingsForm({ initialSettings }: AppSettingsFormProp
                         <div className="space-y-4">
                             <div className="flex items-center justify-between ml-1">
                                 <Label className="text-[9px] font-bold uppercase tracking-widest text-gray-500">Official Emails</Label>
-                                <button 
-                                    type="button" 
+                                <button
+                                    type="button"
                                     onClick={() => setEmailInputs([...emailInputs, ''])}
                                     className="p-1 hover:bg-primary/10 rounded-md transition-colors text-primary"
                                 >
@@ -348,20 +348,20 @@ export default function AppSettingsForm({ initialSettings }: AppSettingsFormProp
                                     <div key={idx} className="flex gap-2 group">
                                         <div className="relative flex-1">
                                             <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/20 group-focus-within:text-primary transition-colors" />
-                                            <Input 
+                                            <Input
                                                 value={email}
                                                 onChange={(e) => {
                                                     const newEmails = [...emailInputs]
                                                     newEmails[idx] = e.target.value
                                                     setEmailInputs(newEmails)
                                                 }}
-                                                placeholder="official@dancecrew.com" 
+                                                placeholder="official@dancecrew.com"
                                                 className="bg-white/[0.02] border-white/10 pl-11 h-11 rounded-xl text-[10px] focus:ring-primary/20 transition-all"
                                             />
                                         </div>
                                         {emailInputs.length > 1 && (
-                                            <button 
-                                                type="button" 
+                                            <button
+                                                type="button"
                                                 onClick={() => setEmailInputs(emailInputs.filter((_, i) => i !== idx))}
                                                 className="p-3 hover:bg-red-500/10 text-red-500 rounded-xl transition-colors border border-transparent hover:border-red-500/20"
                                             >
@@ -377,8 +377,8 @@ export default function AppSettingsForm({ initialSettings }: AppSettingsFormProp
                         <div className="space-y-4">
                             <div className="flex items-center justify-between ml-1">
                                 <Label className="text-[9px] font-bold uppercase tracking-widest text-gray-500">Public Contacts</Label>
-                                <button 
-                                    type="button" 
+                                <button
+                                    type="button"
                                     onClick={() => setContactInputs([...contactInputs, ''])}
                                     className="p-1 hover:bg-primary/10 rounded-md transition-colors text-primary"
                                 >
@@ -393,7 +393,7 @@ export default function AppSettingsForm({ initialSettings }: AppSettingsFormProp
                                                 <Phone className="w-3.5 h-3.5 text-white/20 group-focus-within:text-primary transition-colors" />
                                                 <span className="text-[9px] font-bold text-gray-600">+91</span>
                                             </div>
-                                            <Input 
+                                            <Input
                                                 value={contact}
                                                 maxLength={10}
                                                 onChange={(e) => {
@@ -401,13 +401,13 @@ export default function AppSettingsForm({ initialSettings }: AppSettingsFormProp
                                                     newContacts[idx] = formatContact(e.target.value)
                                                     setContactInputs(newContacts)
                                                 }}
-                                                placeholder="98765 43210" 
+                                                placeholder="98765 43210"
                                                 className="bg-white/[0.02] border-white/10 pl-16 h-11 rounded-xl text-[10px] focus:ring-primary/20 transition-all tracking-[0.1em]"
                                             />
                                         </div>
                                         {contactInputs.length > 1 && (
-                                            <button 
-                                                type="button" 
+                                            <button
+                                                type="button"
                                                 onClick={() => setContactInputs(contactInputs.filter((_, i) => i !== idx))}
                                                 className="p-3 hover:bg-red-500/10 text-red-500 rounded-xl transition-colors border border-transparent hover:border-red-500/20"
                                             >

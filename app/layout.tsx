@@ -23,6 +23,8 @@ export const metadata: Metadata = {
   description: "Unleash your rhythm at D'Art Crew. Book classes, connect with instructors, and transform your artistic dance journey.",
 };
 
+import { Toaster } from "sonner";
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -34,6 +36,7 @@ export default async function RootLayout({
   return (
     <html lang="en" className={cn("dark scroll-smooth", montserrat.variable, cinzel.variable)}>
       <body className="antialiased min-h-screen bg-background text-foreground flex flex-col font-sans overflow-x-hidden">
+        <Toaster position="top-center" richColors />
         <Navbar logoUrl={logoUrl} />
         <main className="flex-1 flex flex-col">
           {children}

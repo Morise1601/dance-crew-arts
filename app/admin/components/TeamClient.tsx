@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { signup, deleteAdmin, updateAdmin, toggleAdminStatus } from '../actions'
 import { createClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils'
+import { toast } from 'sonner'
 
 interface AdminProfile {
     id: string
@@ -61,14 +62,16 @@ export function TeamClient({ initialAdmins }: { initialAdmins: AdminProfile[] })
         const result = await signup(formData)
         if (result?.error) {
             setCreateError(result.error)
+            toast.error(result.error)
             setIsCreating(false)
         } else {
             (e.target as HTMLFormElement).reset()
             setIsCreating(false)
+            toast.success('New personnel instantiated successfully')
         }
     }
 
-    const filteredAdmins = admins.filter(admin => 
+    const filteredAdmins = admins.filter(admin =>
         admin.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
         (`${admin.first_name || ''} ${admin.last_name || ''}`).toLowerCase().includes(searchTerm.toLowerCase())
     )
@@ -81,7 +84,7 @@ export function TeamClient({ initialAdmins }: { initialAdmins: AdminProfile[] })
                     <div>
                         <div className="flex items-center gap-2 mb-2">
                             <div className="w-5 h-0.5 bg-primary rounded-full" />
-                            <span className="text-primary font-black text-[8px] tracking-[0.3em] uppercase">HR Dashboard</span>
+                            <span className="text-primary font-bold text-[8px] tracking-[0.3em] uppercase">HR Dashboard</span>
                         </div>
                         <h1 className="text-2xl font-serif tracking-tighter text-white leading-none">
                             Crew <span className="text-primary italic">Personnel</span>
@@ -92,13 +95,13 @@ export function TeamClient({ initialAdmins }: { initialAdmins: AdminProfile[] })
                     </div>
 
                     <div className="flex items-center gap-3">
-                         <div className="relative group w-48 lg:w-64">
+                        <div className="relative group w-48 lg:w-64">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3 w-3 text-gray-500" />
-                            <Input 
-                                placeholder="Quick Search..." 
+                            <Input
+                                placeholder="Quick Search..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="pl-9 bg-white/[0.03] h-9 rounded-lg border-white/5 focus:border-primary/50 text-[10px] text-white placeholder:text-gray-700" 
+                                className="pl-9 bg-white/[0.03] h-9 rounded-lg border-white/5 focus:border-primary/50 text-[10px] text-white placeholder:text-gray-700"
                             />
                         </div>
 
@@ -120,44 +123,44 @@ export function TeamClient({ initialAdmins }: { initialAdmins: AdminProfile[] })
                                     <form id="add-admin-form" onSubmit={handleCreate} className="space-y-4">
                                         <div className="grid grid-cols-2 gap-3">
                                             <div className="space-y-1.5">
-                                                <Label className="text-[9px] font-black uppercase tracking-widest text-gray-500 ml-1">First Name</Label>
+                                                <Label className="text-[9px] font-bold uppercase tracking-widest text-gray-500 ml-1">First Name</Label>
                                                 <Input name="firstName" placeholder="First Name" required className="bg-white/[0.03] h-9 rounded-lg border-white/5 focus:border-primary/50 text-[10px] text-white placeholder:text-gray-700" />
                                             </div>
                                             <div className="space-y-1.5">
-                                                <Label className="text-[9px] font-black uppercase tracking-widest text-gray-500 ml-1">Last Name</Label>
+                                                <Label className="text-[9px] font-bold uppercase tracking-widest text-gray-500 ml-1">Last Name</Label>
                                                 <Input name="lastName" placeholder="Last Name" required className="bg-white/[0.03] h-9 rounded-lg border-white/5 focus:border-primary/50 text-[10px] text-white placeholder:text-gray-700" />
                                             </div>
                                         </div>
                                         <div className="space-y-1.5">
-                                            <Label className="text-[9px] font-black uppercase tracking-widest text-gray-500 ml-1">Email Address</Label>
+                                            <Label className="text-[9px] font-bold uppercase tracking-widest text-gray-500 ml-1">Email Address</Label>
                                             <Input name="email" type="email" placeholder="admin@danceartscrew.com" required className="bg-white/[0.03] h-10 rounded-lg border-white/5 focus:border-primary/50 text-[10px] text-white placeholder:text-gray-700" />
                                         </div>
                                         <div className="grid grid-cols-2 gap-3">
                                             <div className="space-y-1.5">
-                                                <Label className="text-[9px] font-black uppercase tracking-widest text-gray-500 ml-1">Role</Label>
+                                                <Label className="text-[9px] font-bold uppercase tracking-widest text-gray-500 ml-1">Role</Label>
                                                 <select name="role" required className="w-full bg-white/[0.03] h-9 rounded-lg border border-white/5 focus:border-primary/50 text-[10px] text-white px-2 outline-none">
                                                     <option value="admin" className="bg-[#111]">Admin</option>
                                                     <option value="member" className="bg-[#111]">Member</option>
                                                 </select>
                                             </div>
                                             <div className="space-y-1.5">
-                                                <Label className="text-[9px] font-black uppercase tracking-widest text-gray-500 ml-1">Avatar Image</Label>
+                                                <Label className="text-[9px] font-bold uppercase tracking-widest text-gray-500 ml-1">Avatar Image</Label>
                                                 <Input name="avatar" type="file" accept="image/*" className="bg-white/[0.03] h-9 rounded-lg border-white/5 focus:border-primary/50 text-[8px] text-white p-2" />
                                             </div>
                                         </div>
                                         <div className="grid grid-cols-2 gap-3">
                                             <div className="space-y-1.5">
-                                                <Label className="text-[9px] font-black uppercase tracking-widest text-gray-500 ml-1">Phone Number</Label>
+                                                <Label className="text-[9px] font-bold uppercase tracking-widest text-gray-500 ml-1">Phone Number</Label>
                                                 <Input name="phone" placeholder="+91..." className="bg-white/[0.03] h-9 rounded-lg border-white/5 focus:border-primary/50 text-[10px] text-white placeholder:text-gray-700" />
                                             </div>
                                             <div className="space-y-1.5">
-                                                <Label className="text-[9px] font-black uppercase tracking-widest text-gray-500 ml-1">Password</Label>
+                                                <Label className="text-[9px] font-bold uppercase tracking-widest text-gray-500 ml-1">Password</Label>
                                                 <Input name="password" type="password" required className="bg-white/[0.03] h-9 rounded-lg border-white/5 focus:border-primary/50 text-[10px] text-white placeholder:text-gray-700" />
                                             </div>
                                         </div>
                                         {createError && (
                                             <div className="p-3 rounded-xl bg-primary/10 border border-primary/20 flex items-center gap-2">
-                                                <p className="text-primary text-[8px] font-black uppercase tracking-widest leading-relaxed">{createError}</p>
+                                                <p className="text-primary text-[8px] font-bold uppercase tracking-widest leading-relaxed">{createError}</p>
                                             </div>
                                         )}
                                     </form>
@@ -180,11 +183,11 @@ export function TeamClient({ initialAdmins }: { initialAdmins: AdminProfile[] })
                     <table className="w-full text-left border-collapse min-w-[700px]">
                         <thead>
                             <tr className="border-b border-white/10 bg-white/[0.01]">
-                                <th className="px-6 py-4 text-[8px] font-black uppercase tracking-[0.2em] text-gray-500 w-[30%]">Personnel</th>
-                                <th className="px-6 py-4 text-[8px] font-black uppercase tracking-[0.2em] text-gray-500">Contact Detail</th>
-                                <th className="px-6 py-4 text-[8px] font-black uppercase tracking-[0.2em] text-gray-500">Classification</th>
-                                <th className="px-6 py-4 text-[8px] font-black uppercase tracking-[0.2em] text-gray-500">System Visibility</th>
-                                <th className="px-6 py-4 text-right text-[8px] font-black uppercase tracking-[0.2em] text-gray-500">Action</th>
+                                <th className="px-6 py-4 text-[8px] font-bold uppercase tracking-[0.2em] text-gray-500 w-[30%]">Personnel</th>
+                                <th className="px-6 py-4 text-[8px] font-bold uppercase tracking-[0.2em] text-gray-500">Contact Detail</th>
+                                <th className="px-6 py-4 text-[8px] font-bold uppercase tracking-[0.2em] text-gray-500">Classification</th>
+                                <th className="px-6 py-4 text-[8px] font-bold uppercase tracking-[0.2em] text-gray-500">System Visibility</th>
+                                <th className="px-6 py-4 text-right text-[8px] font-bold uppercase tracking-[0.2em] text-gray-500">Action</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
@@ -192,7 +195,7 @@ export function TeamClient({ initialAdmins }: { initialAdmins: AdminProfile[] })
                                 {filteredAdmins.length === 0 ? (
                                     <tr>
                                         <td colSpan={5} className="py-20 text-center">
-                                            <p className="text-gray-600 uppercase tracking-widest text-[9px] font-black">No personnel matching search criteria</p>
+                                            <p className="text-gray-600 uppercase tracking-widest text-[9px] font-bold">No personnel matching search criteria</p>
                                         </td>
                                     </tr>
                                 ) : (
@@ -214,7 +217,7 @@ export function TeamClient({ initialAdmins }: { initialAdmins: AdminProfile[] })
                                                     </div>
                                                     <div className="min-w-0">
                                                         <h3 className="font-serif text-sm text-white truncate">{admin.first_name} {admin.last_name}</h3>
-                                                        <p className="text-[7px] text-gray-500 font-black uppercase tracking-widest">{new Date(admin.created_at).toLocaleDateString()}</p>
+                                                        <p className="text-[7px] text-gray-500 font-bold uppercase tracking-widest">{new Date(admin.created_at).toLocaleDateString()}</p>
                                                     </div>
                                                 </div>
                                             </td>
@@ -235,25 +238,32 @@ export function TeamClient({ initialAdmins }: { initialAdmins: AdminProfile[] })
                                             <td className="px-6 py-4">
                                                 <div className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-primary/5 border border-primary/20 rounded-lg">
                                                     <Shield className="w-2 h-2 text-primary" />
-                                                    <span className="text-[8px] font-black uppercase tracking-widest text-primary">{admin.Role || admin.role}</span>
+                                                    <span className="text-[8px] font-bold uppercase tracking-widest text-primary">{admin.Role || admin.role}</span>
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <button 
+                                                <button
                                                     onClick={async () => {
                                                         const newStatus = !admin.is_active;
+                                                        const currentStatus = admin.is_active;
                                                         setAdmins(prev => prev.map(a => a.id === admin.id ? { ...a, is_active: newStatus } : a));
-                                                        await toggleAdminStatus(admin.id, newStatus);
+                                                        const res = await toggleAdminStatus(admin.id, newStatus);
+                                                        if (res?.error) {
+                                                            toast.error(res.error);
+                                                            setAdmins(prev => prev.map(a => a.id === admin.id ? { ...a, is_active: currentStatus } : a));
+                                                        } else {
+                                                            toast.success(`Personnel visibility ${newStatus ? 'activated' : 'deactivated'}`);
+                                                        }
                                                     }}
                                                     className={cn(
                                                         "flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all duration-300",
-                                                        admin.is_active 
-                                                            ? "bg-primary/10 border-primary/40 text-primary" 
+                                                        admin.is_active
+                                                            ? "bg-primary/10 border-primary/40 text-primary"
                                                             : "bg-white/[0.02] border-white/5 text-gray-600"
                                                     )}
                                                 >
                                                     <Power className={cn("w-3 h-3", admin.is_active && "animate-pulse")} />
-                                                    <span className="text-[8px] font-black uppercase tracking-widest">{admin.is_active ? 'ACTIVE' : 'OFFLINE'}</span>
+                                                    <span className="text-[8px] font-bold uppercase tracking-widest">{admin.is_active ? 'ACTIVE' : 'OFFLINE'}</span>
                                                 </button>
                                             </td>
                                             <td className="px-6 py-4 text-right">
@@ -276,7 +286,11 @@ export function TeamClient({ initialAdmins }: { initialAdmins: AdminProfile[] })
                                                                     e.preventDefault()
                                                                     const formData = new FormData(e.currentTarget)
                                                                     const res = await updateAdmin(admin.id, formData)
-                                                                    if (res.error) alert(res.error)
+                                                                    if (res.error) {
+                                                                        toast.error(res.error)
+                                                                    } else {
+                                                                        toast.success('Personnel record updated')
+                                                                    }
                                                                 }} className="space-y-4">
                                                                     <div className="grid grid-cols-2 gap-3">
                                                                         <div className="space-y-1">
@@ -319,7 +333,7 @@ export function TeamClient({ initialAdmins }: { initialAdmins: AdminProfile[] })
                                                             </div>
                                                             <SheetFooter className="p-6 border-t border-white/5 mt-auto">
                                                                 <button type="submit" form={`edit-admin-${admin.id}`}
-                                                                    className="w-full bg-white text-black font-black h-10 rounded-lg uppercase tracking-[0.2em] text-[8px] hover:bg-primary transition-all">
+                                                                    className="w-full bg-white text-black font-bold h-10 rounded-lg uppercase tracking-[0.2em] text-[8px] hover:bg-primary transition-all">
                                                                     Apply Profile Changes
                                                                 </button>
                                                             </SheetFooter>
@@ -329,7 +343,12 @@ export function TeamClient({ initialAdmins }: { initialAdmins: AdminProfile[] })
                                                     <button
                                                         onClick={async () => {
                                                             if (confirm(`Revoke access for ${admin.email}?`)) {
-                                                                await deleteAdmin(admin.id)
+                                                                const res = await deleteAdmin(admin.id)
+                                                                if (res?.error) {
+                                                                    toast.error(res.error)
+                                                                } else {
+                                                                    toast.success('Personnel record purged')
+                                                                }
                                                             }
                                                         }}
                                                         className="w-7 h-7 rounded-lg bg-red-500/5 border border-red-500/10 flex items-center justify-center text-red-500/40 hover:bg-red-500 hover:text-white transition-all"

@@ -38,7 +38,7 @@ export default async function AppSettingsPage() {
                         <div className="relative z-10">
                             <div className="flex items-center gap-2 mb-4">
                                 <div className="w-8 h-1 bg-primary rounded-full" />
-                                <span className="text-primary font-black text-[10px] tracking-[0.4em] uppercase">Configuration</span>
+                                <span className="text-primary font-bold text-[10px] tracking-[0.4em] uppercase">Configuration</span>
                             </div>
                             <h1 className="text-3xl lg:text-4xl font-serif tracking-tighter text-white leading-none">
                                 App <span className="text-primary italic">Settings</span>

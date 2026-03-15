@@ -229,7 +229,7 @@ export async function uploadAsset(formData: FormData) {
 
     const file = formData.get('file') as File
     const name = formData.get('name') as string
-    const type = formData.get('type') as 'icon' | 'owner' | 'video'
+    const type = formData.get('type') as 'icon' | 'owner' | 'video' | 'photos'
 
     if (!file || !name || !type) {
         return { error: 'Missing required fields' }
@@ -340,6 +340,23 @@ export async function toggleAssetStatus(id: string, isActive: boolean) {
     revalidatePath('/admin')
     revalidatePath('/portfolio')
     return { success: true }
+}
+
+export async function getPortfolioAssets(type?: string) {
+    const supabase = await createClient()
+    let query = supabase
+        .from('portfolio_assets')
+        .select('*')
+        .eq('is_active', true)
+        .order('created_at', { ascending: false })
+
+    if (type) {
+        query = query.eq('type', type)
+    }
+
+    const { data, error } = await query
+    if (error) return { error: error.message }
+    return { data }
 }
 
 export async function getAppSettings() {

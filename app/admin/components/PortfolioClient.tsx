@@ -10,6 +10,8 @@ import { Trash2, Upload, Loader2, Film, Image as ImageIcon, UserCircle, PenSquar
 import { motion, AnimatePresence } from 'framer-motion'
 import { uploadAsset, deleteAsset, updateAsset, toggleAssetStatus } from '../actions'
 import { createClient } from '@/lib/supabase/client'
+import Image from 'next/image'
+import { toast } from 'sonner'
 
 interface Asset {
     id: string
@@ -26,6 +28,7 @@ interface Asset {
 const typeIcon = (type: string) => {
     if (type === 'video') return <Film className="w-4 h-4 text-blue-400" />
     if (type === 'owner') return <UserCircle className="w-4 h-4 text-purple-400" />
+    if (type === 'photos') return <ImageIcon className="w-4 h-4 text-orange-400" />
     return <ImageIcon className="w-4 h-4 text-green-400" />
 }
 
@@ -33,7 +36,7 @@ export function PortfolioClient({ initialAssets }: { initialAssets: Asset[] }) {
     const [assets, setAssets] = useState(initialAssets)
     const [isUploading, setIsUploading] = useState(false)
     const [uploadError, setUploadError] = useState<string | null>(null)
-    const [filter, setFilter] = useState<'all' | 'video' | 'icon' | 'owner'>('all')
+    const [filter, setFilter] = useState<'all' | 'video' | 'icon' | 'owner' | 'photos'>('all')
     const [searchTerm, setSearchTerm] = useState('')
     const supabase = createClient()
 
@@ -74,10 +77,12 @@ export function PortfolioClient({ initialAssets }: { initialAssets: Asset[] }) {
         const result = await uploadAsset(formData)
         if (result?.error) {
             setUploadError(result.error)
+            toast.error(result.error)
             setIsUploading(false)
         } else {
             (e.target as HTMLFormElement).reset()
             setIsUploading(false)
+            toast.success('Asset uploaded successfully')
             // Realtime will handle the update
         }
     }
@@ -88,9 +93,11 @@ export function PortfolioClient({ initialAssets }: { initialAssets: Asset[] }) {
         setAssets(prev => prev.map(a => a.id === id ? { ...a, is_active: newStatus } : a))
         const res = await toggleAssetStatus(id, newStatus)
         if (res?.error) {
-            alert(res.error)
+            toast.error(res.error)
             // Revert on error
             setAssets(prev => prev.map(a => a.id === id ? { ...a, is_active: currentStatus } : a))
+        } else {
+            toast.success(`Asset visibility updated`)
         }
     }
 
@@ -107,12 +114,12 @@ export function PortfolioClient({ initialAssets }: { initialAssets: Asset[] }) {
                 <div className="absolute top-0 right-0 p-10 opacity-5 blur-md group-hover:scale-110 group-hover:opacity-10 transition-all duration-700">
                     <FolderOpen className="w-64 h-64 text-primary" />
                 </div>
-                
+
                 <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-10">
                     <div>
                         <div className="flex items-center gap-2 mb-4">
                             <div className="w-12 h-1 bg-primary rounded-full" />
-                            <span className="text-primary font-black text-[8px] tracking-[0.4em] uppercase">Visual Assets</span>
+                            <span className="text-primary font-bold text-[8px] tracking-[0.4em] uppercase">Visual Assets</span>
                         </div>
                         <h1 className="text-3xl lg:text-4xl font-serif tracking-tighter text-white leading-none">
                             Portfolio <span className="text-primary italic">Hub</span>
@@ -156,6 +163,7 @@ export function PortfolioClient({ initialAssets }: { initialAssets: Asset[] }) {
                                                 <SelectItem value="icon">Icon / Graphic</SelectItem>
                                                 <SelectItem value="owner">Profile Photo</SelectItem>
                                                 <SelectItem value="video">Dance Video</SelectItem>
+                                                <SelectItem value="photos">Portfolio Photo</SelectItem>
                                             </SelectContent>
                                         </Select>
                                     </div>
@@ -171,7 +179,7 @@ export function PortfolioClient({ initialAssets }: { initialAssets: Asset[] }) {
                                     {uploadError && (
                                         <div className="p-4 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center gap-3">
                                             <div className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
-                                            <p className="text-red-400 text-[10px] font-black uppercase tracking-widest">{uploadError}</p>
+                                            <p className="text-red-400 text-[10px] font-bold uppercase tracking-widest">{uploadError}</p>
                                         </div>
                                     )}
                                 </form>
@@ -195,15 +203,15 @@ export function PortfolioClient({ initialAssets }: { initialAssets: Asset[] }) {
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         placeholder="Search for files..."
-                        className="w-full h-12 pl-12 pr-5 bg-[#080808] border border-white/5 rounded-2xl text-[11px] font-black uppercase tracking-widest text-white placeholder:text-gray-700 focus:outline-none focus:border-primary/40 focus:bg-white/[0.01] transition-all"
+                        className="w-full h-12 pl-12 pr-5 bg-[#080808] border border-white/5 rounded-2xl text-[11px] font-bold uppercase tracking-widest text-white placeholder:text-gray-700 focus:outline-none focus:border-primary/40 focus:bg-white/[0.01] transition-all"
                     />
                 </div>
                 <div className="flex bg-[#080808] p-1.5 rounded-2xl border border-white/5 shadow-xl overflow-x-auto scrollbar-hide max-w-full">
-                    {(['all', 'video', 'icon', 'owner'] as const).map((f) => (
+                    {(['all', 'video', 'icon', 'owner', 'photos'] as const).map((f) => (
                         <button
                             key={f}
                             onClick={() => setFilter(f)}
-                            className={`h-9 px-6 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] transition-all duration-300 min-w-max ${filter === f
+                            className={`h-9 px-6 rounded-xl text-[9px] font-bold uppercase tracking-[0.2em] transition-all duration-300 min-w-max ${filter === f
                                 ? 'bg-primary text-black shadow-lg shadow-primary/20 scale-105'
                                 : 'text-gray-500 hover:text-white hover:bg-white/5'
                                 }`}
@@ -220,12 +228,12 @@ export function PortfolioClient({ initialAssets }: { initialAssets: Asset[] }) {
                     <table className="w-full text-left border-collapse min-w-[800px]">
                         <thead>
                             <tr className="border-b border-white/10 bg-white/[0.02]">
-                                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Resource</th>
-                                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Metadata</th>
-                                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Visibility</th>
-                                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Uploader</th>
-                                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Timestamp</th>
-                                <th className="px-8 py-6 text-right text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Actions</th>
+                                <th className="px-8 py-6 text-[10px] font-bold uppercase tracking-[0.3em] text-gray-500">Resource</th>
+                                <th className="px-8 py-6 text-[10px] font-bold uppercase tracking-[0.3em] text-gray-500">Metadata</th>
+                                <th className="px-8 py-6 text-[10px] font-bold uppercase tracking-[0.3em] text-gray-500">Visibility</th>
+                                <th className="px-8 py-6 text-[10px] font-bold uppercase tracking-[0.3em] text-gray-500">Uploader</th>
+                                <th className="px-8 py-6 text-[10px] font-bold uppercase tracking-[0.3em] text-gray-500">Timestamp</th>
+                                <th className="px-8 py-6 text-right text-[10px] font-bold uppercase tracking-[0.3em] text-gray-500">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
@@ -234,7 +242,7 @@ export function PortfolioClient({ initialAssets }: { initialAssets: Asset[] }) {
                                     <tr>
                                         <td colSpan={6} className="py-32 text-center">
                                             <Activity className="w-12 h-12 text-gray-800 mx-auto mb-4 animate-pulse" />
-                                            <p className="text-gray-600 uppercase tracking-[0.4em] text-[10px] font-black italic">No matches found in visual matrix</p>
+                                            <p className="text-gray-600 uppercase tracking-[0.4em] text-[10px] font-bold italic">No matches found in visual matrix</p>
                                         </td>
                                     </tr>
                                 ) : (
@@ -260,7 +268,9 @@ export function PortfolioClient({ initialAssets }: { initialAssets: Asset[] }) {
                                                                     </div>
                                                                 </div>
                                                             ) : (
-                                                                <img src={asset.url} alt="" className="w-full h-full object-cover" />
+                                                                <div className="relative w-full h-full">
+                                                                    <Image src={asset.url} alt="" fill className="object-cover" />
+                                                                </div>
                                                             )}
                                                         </div>
                                                         <a href={asset.url} target="_blank" className="absolute -top-1 -right-1 bg-black border border-white/10 p-1 rounded-lg opacity-0 group-hover/thumb:opacity-100 transition-opacity">
@@ -273,7 +283,7 @@ export function PortfolioClient({ initialAssets }: { initialAssets: Asset[] }) {
                                                         </h3>
                                                         <div className="flex items-center gap-2 text-gray-600">
                                                             <div className={`w-1.5 h-1.5 rounded-full ${asset.is_active ? 'bg-green-500' : 'bg-red-500'}`} />
-                                                            <span className="text-[8px] font-black uppercase tracking-widest italic">{asset.is_active ? 'Publicly Visible' : 'Hidden from Gallery'}</span>
+                                                            <span className="text-[8px] font-bold uppercase tracking-widest italic">{asset.is_active ? 'Publicly Visible' : 'Hidden from Gallery'}</span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -281,15 +291,15 @@ export function PortfolioClient({ initialAssets }: { initialAssets: Asset[] }) {
                                             <td className="px-8 py-6">
                                                 <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary/5 border border-primary/20 rounded-xl">
                                                     {typeIcon(asset.type)}
-                                                    <span className="text-[9px] font-black uppercase tracking-widest text-primary">{asset.type}</span>
+                                                    <span className="text-[9px] font-bold uppercase tracking-widest text-primary">{asset.type}</span>
                                                 </div>
                                             </td>
                                             <td className="px-8 py-6">
-                                                <button 
+                                                <button
                                                     onClick={() => handleToggleStatus(asset.id, !!asset.is_active)}
                                                     className={`relative inline-flex h-6 w-12 items-center rounded-full transition-all duration-300 focus:outline-none ${asset.is_active ? 'bg-primary' : 'bg-white/10'}`}
                                                 >
-                                                    <span className={`text-[7px] font-black absolute ${asset.is_active ? 'left-2 text-black' : 'right-2 text-gray-500'}`}>
+                                                    <span className={`text-[7px] font-bold absolute ${asset.is_active ? 'left-2 text-black' : 'right-2 text-gray-500'}`}>
                                                         {asset.is_active ? 'ON' : 'OFF'}
                                                     </span>
                                                     <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-300 ${asset.is_active ? 'translate-x-7' : 'translate-x-1'}`} />
@@ -302,7 +312,7 @@ export function PortfolioClient({ initialAssets }: { initialAssets: Asset[] }) {
                                                 </div>
                                             </td>
                                             <td className="px-8 py-6">
-                                                <div className="flex items-center gap-2 text-[9px] text-gray-500 font-black uppercase tracking-widest">
+                                                <div className="flex items-center gap-2 text-[9px] text-gray-500 font-bold uppercase tracking-widest">
                                                     <Calendar className="w-3.5 h-3.5" />
                                                     {new Date(asset.created_at).toLocaleDateString()}
                                                 </div>
@@ -328,8 +338,12 @@ export function PortfolioClient({ initialAssets }: { initialAssets: Asset[] }) {
                                                                     e.preventDefault()
                                                                     const name = new FormData(e.currentTarget).get('editName') as string
                                                                     const res = await updateAsset(asset.id, name)
-                                                                    if (res.error) alert(res.error)
-                                                                    else window.location.reload()
+                                                                    if (res.error) {
+                                                                        toast.error(res.error)
+                                                                    } else {
+                                                                        toast.success('Asset name updated')
+                                                                        window.location.reload()
+                                                                    }
                                                                 }} className="space-y-6">
                                                                     <div className="space-y-1.5">
                                                                         <Label className="text-[9px] font-bold uppercase text-gray-500 ml-1">Asset Name</Label>
@@ -339,7 +353,7 @@ export function PortfolioClient({ initialAssets }: { initialAssets: Asset[] }) {
                                                             </div>
                                                             <SheetFooter className="p-8 border-t border-white/5 mt-auto">
                                                                 <button type="submit" form={`edit-asset-${asset.id}`}
-                                                                    className="w-full bg-white text-black font-black h-12 rounded-lg uppercase tracking-[0.2em] text-[10px] hover:bg-primary transition-all">
+                                                                    className="w-full bg-white text-black font-bold h-12 rounded-lg uppercase tracking-[0.2em] text-[10px] hover:bg-primary transition-all">
                                                                     Sync Changes
                                                                 </button>
                                                             </SheetFooter>
@@ -356,24 +370,28 @@ export function PortfolioClient({ initialAssets }: { initialAssets: Asset[] }) {
                                                         />
                                                         <DialogContent className="bg-[#080808] border-white/10 rounded-[40px] p-8">
                                                             <DialogHeader className="mb-6">
-                                                                <DialogTitle className="font-serif text-3xl text-white tracking-tight">Purge <span className="text-red-500 italic">Confirmed?</span></DialogTitle>
+                                                                <DialogTitle className="font-serif text-3xl text-white tracking-tight">Are You Sure to <span className="text-red-500 italic">Delete?</span></DialogTitle>
                                                                 <DialogDescription className="text-gray-500 mt-4 leading-relaxed font-light italic text-xs uppercase tracking-widest">
                                                                     Permanently erase &ldquo;{asset.name}&rdquo; from cloud vaults.
                                                                 </DialogDescription>
                                                             </DialogHeader>
                                                             <DialogFooter className="gap-4">
-                                                                <button className="flex-1 h-12 rounded-xl border border-white/10 text-gray-500 font-black text-[9px] uppercase tracking-[0.3em] hover:bg-white/5 transition-all">
-                                                                    Abort
+                                                                <button className="flex-1 h-12 rounded-xl border border-white/10 text-gray-500 font-bold text-[9px] uppercase tracking-[0.3em] hover:bg-white/5 transition-all">
+                                                                    Cancel
                                                                 </button>
                                                                 <button
                                                                     onClick={async () => {
                                                                         const res = await deleteAsset(asset.id, asset.storage_path)
-                                                                        if (res?.error) alert(res.error)
-                                                                        else setAssets(prev => prev.filter(a => a.id !== asset.id))
+                                                                        if (res?.error) {
+                                                                            toast.error(res.error)
+                                                                        } else {
+                                                                            toast.success('Asset deleted permanently')
+                                                                            setAssets(prev => prev.filter(a => a.id !== asset.id))
+                                                                        }
                                                                     }}
-                                                                    className="flex-1 h-12 rounded-xl bg-red-600 text-white font-black text-[9px] uppercase tracking-[0.3em] hover:bg-red-500 shadow-xl transition-all"
+                                                                    className="flex-1 h-12 rounded-xl bg-red-600 text-white font-bold text-[9px] uppercase tracking-[0.3em] hover:bg-red-500 shadow-xl transition-all"
                                                                 >
-                                                                    Purge
+                                                                    Delete
                                                                 </button>
                                                             </DialogFooter>
                                                         </DialogContent>

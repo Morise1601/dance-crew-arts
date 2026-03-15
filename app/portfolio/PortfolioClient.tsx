@@ -2,21 +2,23 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Play, Film, Calendar, X } from "lucide-react";
+import { Play, Film, Calendar, X, Image as ImageIcon } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import Image from "next/image";
 
-interface Video {
+interface PortfolioAsset {
     id: string;
     name: string;
     url: string;
+    type: string;
     created_at: string;
     is_active: boolean;
 }
 
-export default function PortfolioClient({ initialVideos }: { initialVideos: Video[] }) {
-    const [videos, setVideos] = useState<Video[]>(initialVideos);
+export default function PortfolioClient({ initialAssets }: { initialAssets: PortfolioAsset[] }) {
+    const [assets, setAssets] = useState<PortfolioAsset[]>(initialAssets);
     const [filter, setFilter] = useState("All");
-    const [activeVideo, setActiveVideo] = useState<Video | null>(null);
+    const [activeAsset, setActiveAsset] = useState<PortfolioAsset | null>(null);
     const supabase = createClient();
 
     useEffect(() => {
@@ -31,13 +33,13 @@ export default function PortfolioClient({ initialVideos }: { initialVideos: Vide
                 },
                 (payload) => {
                     if (payload.eventType === 'INSERT') {
-                        const newAsset = payload.new as Video;
-                        if (newAsset.is_active) {
-                            setVideos(prev => [newAsset, ...prev]);
+                        const newAsset = payload.new as PortfolioAsset;
+                        if (newAsset.is_active && (newAsset.type === 'video' || newAsset.type === 'photos')) {
+                            setAssets(prev => [newAsset, ...prev]);
                         }
                     } else if (payload.eventType === 'UPDATE') {
-                        const updatedAsset = payload.new as Video;
-                        setVideos(prev => {
+                        const updatedAsset = payload.new as PortfolioAsset;
+                        setAssets(prev => {
                             const exists = prev.find(v => v.id === updatedAsset.id);
                             if (exists) {
                                 if (!updatedAsset.is_active) {
@@ -45,8 +47,8 @@ export default function PortfolioClient({ initialVideos }: { initialVideos: Vide
                                 }
                                 return prev.map(v => v.id === updatedAsset.id ? updatedAsset : v);
                             } else {
-                                if (updatedAsset.is_active) {
-                                    return [updatedAsset, ...prev].sort((a, b) => 
+                                if (updatedAsset.is_active && (updatedAsset.type === 'video' || updatedAsset.type === 'photos')) {
+                                    return [updatedAsset, ...prev].sort((a, b) =>
                                         new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
                                     );
                                 }
@@ -55,7 +57,7 @@ export default function PortfolioClient({ initialVideos }: { initialVideos: Vide
                         });
                     } else if (payload.eventType === 'DELETE') {
                         const oldId = (payload.old as { id: string }).id;
-                        setVideos(prev => prev.filter(v => v.id !== oldId));
+                        setAssets(prev => prev.filter(v => v.id !== oldId));
                     }
                 }
             )
@@ -66,11 +68,14 @@ export default function PortfolioClient({ initialVideos }: { initialVideos: Vide
         };
     }, [supabase]);
 
-    const categories = ["All", "Recent", "Highlights"];
+    const categories = ["All", "Videos", "Photos", "Recent"];
 
-    const filteredItems = filter === "All" 
-        ? videos 
-        : videos.slice(0, 4);
+    const filteredItems = assets.filter(item => {
+        if (filter === "All") return true;
+        if (filter === "Videos") return item.type === "video";
+        if (filter === "Photos") return item.type === "photos";
+        return true; // Recent is just default All for now
+    });
 
     return (
         <div className="bg-[#020202] text-white min-h-screen pt-24 pb-16 selection:bg-primary/20 relative overflow-hidden">
@@ -122,8 +127,8 @@ export default function PortfolioClient({ initialVideos }: { initialVideos: Vide
 
             <div className="container mx-auto px-4 md:px-8 max-w-7xl">
 
-                {/* Innovative Asymmetrical Gallery Grid */}
-                <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-12 gap-5 lg:gap-6 auto-rows-[200px] sm:auto-rows-[240px] lg:auto-rows-[280px]">
+                {/* Attractive Uniform Gallery Grid */}
+                <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
                     <AnimatePresence mode="popLayout">
                         {filteredItems.length === 0 ? (
                             <div className="col-span-full py-32 text-center border border-white/5 rounded-3xl bg-white/[0.01]">
@@ -133,32 +138,22 @@ export default function PortfolioClient({ initialVideos }: { initialVideos: Vide
                                 </p>
                             </div>
                         ) : (
-                            filteredItems.map((item, i) => {
-                                // Dynamic column spanning for masonry feel
-                                const isFeature = i % 7 === 0;
-                                const isWide = i % 7 === 3;
-                                
-                                const spanClass = isFeature 
-                                    ? "xl:col-span-8 md:col-span-2" 
-                                    : isWide 
-                                        ? "xl:col-span-7 md:col-span-2 lg:col-span-2" 
-                                        : "xl:col-span-4 lg:col-span-1";
-
-                                return (
-                                    <motion.div
-                                        key={item.id}
-                                        layout
-                                        initial={{ opacity: 0, y: 30 }}
-                                        whileInView={{ opacity: 1, y: 0 }}
-                                        viewport={{ once: true, margin: "-50px" }}
-                                        exit={{ opacity: 0, scale: 0.95 }}
-                                        transition={{ duration: 0.6, delay: (i % 4) * 0.1 }}
-                                        className={`group relative bg-[#080808] rounded-3xl overflow-hidden cursor-pointer shadow-lg ${spanClass}`}
-                                        onClick={() => setActiveVideo(item)}
-                                    >
-                                        <div className="absolute inset-0 z-0">
-                                            <video 
-                                                src={item.url} 
+                            filteredItems.map((item, i) => (
+                                <motion.div
+                                    key={item.id}
+                                    layout
+                                    initial={{ opacity: 0, y: 30 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true, margin: "-50px" }}
+                                    exit={{ opacity: 0, scale: 0.95 }}
+                                    transition={{ duration: 0.6, delay: (i % 4) * 0.1 }}
+                                    className="group relative bg-[#080808] rounded-[2rem] overflow-hidden cursor-pointer shadow-2xl border border-white/5 aspect-square lg:aspect-[4/5]"
+                                    onClick={() => setActiveAsset(item)}
+                                >
+                                    <div className="absolute inset-0 z-0">
+                                        {item.type === 'video' ? (
+                                            <video
+                                                src={item.url}
                                                 className="w-full h-full object-cover grayscale-[0.5] group-hover:grayscale-0 group-hover:scale-110 transition-all duration-[1.5s] ease-[cubic-bezier(0.16,1,0.3,1)]"
                                                 muted
                                                 playsInline
@@ -168,33 +163,40 @@ export default function PortfolioClient({ initialVideos }: { initialVideos: Vide
                                                     e.currentTarget.pause();
                                                 }}
                                             />
-                                            {/* Advanced Overlay Gradients */}
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-700" />
-                                            <div className="absolute inset-0 bg-primary/20 mix-blend-overlay opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                                        </div>
+                                        ) : (
+                                            <Image
+                                                src={item.url}
+                                                alt={item.name}
+                                                fill
+                                                className="w-full h-full object-cover grayscale-[0.5] group-hover:grayscale-0 group-hover:scale-110 transition-all duration-[1.5s] ease-[cubic-bezier(0.16,1,0.3,1)]"
+                                            />
+                                        )}
+                                        {/* Advanced Overlay Gradients */}
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-700" />
+                                        <div className="absolute inset-0 bg-primary/20 mix-blend-overlay opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                                    </div>
 
-                                        {/* Minimalist Play Indicator in Center */}
-                                        <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500 scale-90 group-hover:scale-100">
-                                            <div className="w-20 h-20 rounded-full border border-white/20 bg-black/20 backdrop-blur-md flex items-center justify-center">
-                                                <Play className="w-8 h-8 text-white fill-white ml-1" />
-                                            </div>
+                                    {/* Minimalist Play Indicator in Center */}
+                                    <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500 scale-90 group-hover:scale-100">
+                                        <div className="w-20 h-20 rounded-full border border-white/20 bg-black/20 backdrop-blur-md flex items-center justify-center">
+                                            {item.type === 'video' ? <Play className="w-8 h-8 text-white fill-white ml-1" /> : <ImageIcon className="w-8 h-8 text-white" />}
                                         </div>
+                                    </div>
 
-                                        {/* Typography & Context overlay */}
-                                        <div className="absolute inset-x-0 bottom-0 p-8 z-20 flex flex-col justify-end translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                                            <div className="flex items-center gap-3 mb-3 text-[9px] font-bold uppercase tracking-widest text-primary/80">
-                                                <Calendar className="w-3 h-3" />
-                                                {new Date(item.created_at).toLocaleDateString(undefined, { month: 'short', year: 'numeric' })}
-                                                <span className="w-1 h-1 bg-white/30 rounded-full mx-1" />
-                                                <span className="text-white/50">HQ File</span>
-                                            </div>
-                                            <h3 className="text-lg md:text-2xl font-black uppercase tracking-tight text-white leading-none">
-                                                {item.name}
-                                            </h3>
+                                    {/* Typography & Context overlay */}
+                                    <div className="absolute inset-x-0 bottom-0 p-8 z-20 flex flex-col justify-end translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                                        <div className="flex items-center gap-3 mb-3 text-[9px] font-bold uppercase tracking-widest text-primary/80">
+                                            <Calendar className="w-3 h-3" />
+                                            {new Date(item.created_at).toLocaleDateString(undefined, { month: 'short', year: 'numeric' })}
+                                            <span className="w-1 h-1 bg-white/30 rounded-full mx-1" />
+                                            <span className="text-white/50">HQ File</span>
                                         </div>
-                                    </motion.div>
-                                );
-                            })
+                                        <h3 className="text-lg md:text-2xl font-bold uppercase tracking-tight text-white leading-none">
+                                            {item.name}
+                                        </h3>
+                                    </div>
+                                </motion.div>
+                            ))
                         )}
                     </AnimatePresence>
                 </motion.div>
@@ -202,7 +204,7 @@ export default function PortfolioClient({ initialVideos }: { initialVideos: Vide
 
             {/* Cinematic Modal Player */}
             <AnimatePresence>
-                {activeVideo && (
+                {activeAsset && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -219,25 +221,36 @@ export default function PortfolioClient({ initialVideos }: { initialVideos: Vide
                         >
                             <div className="absolute -top-16 left-0 right-0 flex justify-between items-end">
                                 <div>
-                                    <p className="text-primary text-[10px] font-bold uppercase tracking-[0.3em] mb-2">Currently Playing</p>
-                                    <h2 className="text-xl md:text-2xl font-bold uppercase text-white tracking-widest">{activeVideo.name}</h2>
+                                    <p className="text-primary text-[10px] font-bold uppercase tracking-[0.3em] mb-2">Currently Viewing</p>
+                                    <h2 className="text-xl md:text-2xl font-bold uppercase text-white tracking-widest">{activeAsset.name}</h2>
                                 </div>
                                 <button
-                                    onClick={() => setActiveVideo(null)}
+                                    onClick={() => setActiveAsset(null)}
                                     className="group w-10 h-10 rounded-full border border-white/20 bg-white/5 backdrop-blur-md flex items-center justify-center text-white hover:bg-primary hover:border-primary hover:text-black transition-all duration-300"
                                 >
                                     <X className="w-4 h-4 group-hover:rotate-90 transition-transform duration-500" />
                                 </button>
                             </div>
 
-                            <div className="aspect-video w-full rounded-2xl overflow-hidden border border-white/10 bg-black relative">
-                                <video
-                                    src={activeVideo.url}
-                                    className="w-full h-full object-cover"
-                                    controls
-                                    autoPlay
-                                    controlsList="nodownload"
-                                />
+                            <div className={`w-full rounded-2xl overflow-hidden border border-white/10 bg-black relative ${activeAsset.type === 'video' ? 'aspect-video' : 'max-h-[80vh] flex items-center justify-center'}`}>
+                                {activeAsset.type === 'video' ? (
+                                    <video
+                                        src={activeAsset.url}
+                                        className="w-full h-full object-cover"
+                                        controls
+                                        autoPlay
+                                        controlsList="nodownload"
+                                    />
+                                ) : (
+                                    <div className="relative w-full h-[80vh]">
+                                        <Image
+                                            src={activeAsset.url}
+                                            alt={activeAsset.name}
+                                            fill
+                                            className="object-contain"
+                                        />
+                                    </div>
+                                )}
                             </div>
                         </motion.div>
 
@@ -246,7 +259,7 @@ export default function PortfolioClient({ initialVideos }: { initialVideos: Vide
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             className="absolute inset-0 -z-10 cursor-pointer"
-                            onClick={() => setActiveVideo(null)}
+                            onClick={() => setActiveAsset(null)}
                         />
                     </motion.div>
                 )}

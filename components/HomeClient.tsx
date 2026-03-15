@@ -18,15 +18,41 @@ interface CrewMember {
     is_active: boolean;
 }
 
+interface PortfolioAsset {
+    id: string;
+    name: string;
+    type: string;
+    url: string;
+    is_active: boolean;
+}
+
 interface HomeClientProps {
     founderImg?: string | null;
     members: CrewMember[];
+    portfolioPhotos?: PortfolioAsset[];
 }
 
-export default function HomeClient({ founderImg, members: initialMembers }: HomeClientProps) {
+export default function HomeClient({ founderImg, members: initialMembers, portfolioPhotos = [] }: HomeClientProps) {
     const [members, setMembers] = useState(initialMembers);
     const { scrollY } = useScroll();
     const containerRef = useRef<HTMLDivElement>(null);
+    const sliderContainerRef = useRef<HTMLDivElement>(null);
+    const sliderContentRef = useRef<HTMLDivElement>(null);
+    const [isSliderScrollable, setIsSliderScrollable] = useState(false);
+
+    useEffect(() => {
+        const checkScrolling = () => {
+            if (sliderContainerRef.current && sliderContentRef.current) {
+                const containerWidth = sliderContainerRef.current.offsetWidth;
+                const contentWidth = sliderContentRef.current.scrollWidth;
+                setIsSliderScrollable(contentWidth > containerWidth);
+            }
+        };
+
+        checkScrolling();
+        window.addEventListener('resize', checkScrolling);
+        return () => window.removeEventListener('resize', checkScrolling);
+    }, [portfolioPhotos]);
 
     // Hero Parallax
     const yHero = useTransform(scrollY, [0, 800], [0, 200]);
@@ -156,14 +182,14 @@ export default function HomeClient({ founderImg, members: initialMembers }: Home
                             className="flex flex-col sm:flex-row lg:flex-col gap-3 items-start lg:items-end"
                         >
                             <Link href="/booking">
-                                <Button className="relative group overflow-hidden bg-primary hover:bg-white text-black px-7 h-11 text-xs font-black uppercase tracking-[0.2em] transition-all duration-500 shadow-[0_0_20px_rgba(227,157,28,0.25)]">
+                                <Button className="relative group overflow-hidden bg-primary hover:bg-white text-black px-7 h-11 text-xs font-bold uppercase tracking-[0.2em] transition-all duration-500 shadow-[0_0_20px_rgba(227,157,28,0.25)]">
                                     <span className="relative z-10 flex items-center gap-2">
                                         Book a Class <ArrowUpRight className="w-3.5 h-3.5 group-hover:rotate-45 transition-transform duration-500" />
                                     </span>
                                 </Button>
                             </Link>
                             <Link href="/about">
-                                <Button variant="outline" className="group bg-transparent border-white/15 text-white hover:border-primary hover:bg-primary/8 px-7 h-11 text-xs font-black uppercase tracking-[0.2em] transition-all duration-500">
+                                <Button variant="outline" className="group bg-transparent border-white/15 text-white hover:border-primary hover:bg-primary/8 px-7 h-11 text-xs font-bold uppercase tracking-[0.2em] transition-all duration-500">
                                     Discover Us
                                 </Button>
                             </Link>
@@ -265,8 +291,61 @@ export default function HomeClient({ founderImg, members: initialMembers }: Home
                 </div>
             </section>
 
+            {/* ─── PORTFOLIO SLIDER ─── */}
+            {portfolioPhotos.length > 0 && (
+                <section className="py-20 bg-[#020202] relative overflow-hidden">
+                    <div className="container mx-auto px-4 md:px-8 max-w-7xl relative z-10 mb-12" ref={sliderContainerRef}>
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="w-8 h-[1px] bg-primary" />
+                            <span className="text-primary font-bold text-[10px] uppercase tracking-[0.3em]">Portfolio</span>
+                        </div>
+                        <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold uppercase tracking-tight leading-tight">
+                            Captured <span className="text-white/30 italic font-serif">Moments.</span>
+                        </h2>
+                    </div>
+
+                    <div className="relative w-full">
+                        <div className="container mx-auto px-4 md:px-8 max-w-7xl">
+                            <div className="overflow-visible">
+                                <motion.div
+                                    ref={sliderContentRef}
+                                    className={`flex gap-6 w-max ${!isSliderScrollable ? 'md:justify-center' : ''}`}
+                                    animate={isSliderScrollable ? {
+                                        x: [0, -((sliderContentRef.current?.scrollWidth || 0) / 3)]
+                                    } : { x: 0 }}
+                                    transition={{
+                                        x: {
+                                            repeat: isSliderScrollable ? Infinity : 0,
+                                            repeatType: "loop",
+                                            duration: portfolioPhotos.length * 8,
+                                            ease: "linear"
+                                        }
+                                    }}
+                                    whileHover={{ animationPlayState: "paused" }}
+                                >
+                                    {(isSliderScrollable ? [...portfolioPhotos, ...portfolioPhotos, ...portfolioPhotos] : portfolioPhotos).map((photo, i) => (
+                                        <div key={`${photo.id}-${i}`} className="relative flex-shrink-0 w-[240px] md:w-[300px] aspect-[4/5] rounded-2xl overflow-hidden group border border-white/5">
+                                            <Image
+                                                src={photo.url}
+                                                alt={photo.name}
+                                                fill
+                                                className="object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-[1.5s]"
+                                            />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                                            <div className="absolute bottom-6 left-6 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+                                                <p className="text-[10px] font-bold uppercase tracking-widest text-primary italic">{photo.name}</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </motion.div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            )}
+
             {/* ─── THE CREW ─── */}
-            <section className="py-20 bg-black relative overflow-hidden border-t border-white/5">
+            {/* <section className="py-20 bg-black relative overflow-hidden border-t border-white/5">
                 <div className="absolute top-0 left-0 w-full h-[300px] bg-gradient-to-b from-[#020202] to-transparent pointer-events-none" />
 
                 <div className="container mx-auto px-4 md:px-8 max-w-7xl relative z-10">
@@ -288,7 +367,7 @@ export default function HomeClient({ founderImg, members: initialMembers }: Home
                     {members.length === 0 ? (
                         <div className="w-full py-24 text-center border border-white/5 rounded-2xl bg-white/[0.01]">
                             <Info className="w-7 h-7 text-white/20 mx-auto mb-4" />
-                            <p className="text-[10px] uppercase font-black tracking-[0.3em] text-white/40">No personnel currently deployed</p>
+                            <p className="text-[10px] uppercase font-bold tracking-[0.3em] text-white/40">No personnel currently deployed</p>
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
@@ -315,7 +394,7 @@ export default function HomeClient({ founderImg, members: initialMembers }: Home
                                             <div className="flex justify-between items-end">
                                                 <div>
                                                     <h3 className="text-sm font-bold uppercase tracking-widest text-white mb-0.5">{member.first_name}</h3>
-                                                    <p className="text-[9px] font-black uppercase tracking-[0.3em] text-primary">{member.Role}</p>
+                                                    <p className="text-[9px] font-bold uppercase tracking-[0.3em] text-primary">{member.Role}</p>
                                                 </div>
                                                 <button className="w-8 h-8 rounded-full bg-black/50 backdrop-blur-md border border-white/10 flex items-center justify-center text-white hover:bg-primary hover:text-black hover:scale-110 transition-all">
                                                     <Instagram size={12} />
@@ -328,7 +407,7 @@ export default function HomeClient({ founderImg, members: initialMembers }: Home
                         </div>
                     )}
                 </div>
-            </section>
+            </section> */}
 
             {/* ─── IMMERSIVE CTA ─── */}
             <section className="py-20 relative bg-[#020202] overflow-hidden border-t border-white/5">
@@ -347,7 +426,7 @@ export default function HomeClient({ founderImg, members: initialMembers }: Home
                             <Sparkles className="w-3 h-3 text-primary" />
                             <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-primary">Start Your Journey</span>
                         </div>
-                        <h2 className="text-2xl md:text-3xl lg:text-4xl font-black uppercase tracking-tight mb-6 leading-tight">
+                        <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold uppercase tracking-tight mb-6 leading-tight">
                             Enter The{" "}
                             <span className="font-serif italic text-primary">Sequence.</span>
                         </h2>
@@ -355,7 +434,7 @@ export default function HomeClient({ founderImg, members: initialMembers }: Home
                             Secure your spot in an upcoming session and begin your transformation with D&apos;Art Crew today.
                         </p>
                         <Link href="/booking">
-                            <Button className="bg-white text-black hover:bg-primary hover:text-black px-10 h-12 text-xs font-black uppercase tracking-[0.25em] transition-all duration-500 shadow-[0_0_40px_rgba(255,255,255,0.08)] hover:shadow-[0_0_40px_rgba(227,157,28,0.35)]">
+                            <Button className="bg-white text-black hover:bg-primary hover:text-black px-10 h-12 text-xs font-bold uppercase tracking-[0.25em] transition-all duration-500 shadow-[0_0_40px_rgba(255,255,255,0.08)] hover:shadow-[0_0_40px_rgba(227,157,28,0.35)]">
                                 Initiate Booking
                             </Button>
                         </Link>

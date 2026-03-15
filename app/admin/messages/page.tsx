@@ -65,13 +65,13 @@ export default async function AdminMessagesPage() {
                                     Review and manage messages sent through the official contact form.
                                 </p>
                             </div>
-                            
+
                             <div className="flex items-center gap-4 bg-black/40 border border-white/10 p-5 rounded-2xl shadow-xl backdrop-blur-xl">
                                 <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary border border-primary/20">
                                     <Mail size={24} />
                                 </div>
                                 <div>
-                                    <p className="text-[10px] text-gray-500 uppercase font-black tracking-widest">Active Inbox</p>
+                                    <p className="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Active Inbox</p>
                                     <p className="text-sm font-bold text-white uppercase tracking-tight">{messages?.length || 0} Submissions</p>
                                 </div>
                             </div>

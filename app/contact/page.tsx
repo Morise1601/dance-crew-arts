@@ -31,7 +31,7 @@ export default async function ContactPage() {
                     <div className="lg:col-span-5 flex flex-col justify-between">
                         <div className="space-y-12">
                             <div className="group relative">
-                                <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-3 flex items-center gap-2">
+                                <h4 className="text-[10px] font-bold uppercase tracking-[0.3em] text-primary mb-3 flex items-center gap-2">
                                     <MapPin size={11} />
                                     Headquarters
                                 </h4>
@@ -41,7 +41,7 @@ export default async function ContactPage() {
                             </div>
 
                             <div className="group relative">
-                                <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-3 flex items-center gap-2">
+                                <h4 className="text-[10px] font-bold uppercase tracking-[0.3em] text-primary mb-3 flex items-center gap-2">
                                     <Phone size={11} />
                                     Direct Line
                                 </h4>
@@ -59,7 +59,7 @@ export default async function ContactPage() {
                             </div>
 
                             <div className="group relative">
-                                <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-3 flex items-center gap-2">
+                                <h4 className="text-[10px] font-bold uppercase tracking-[0.3em] text-primary mb-3 flex items-center gap-2">
                                     <Mail size={11} />
                                     Digital Signal
                                 </h4>

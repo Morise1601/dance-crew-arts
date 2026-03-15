@@ -23,7 +23,7 @@ export default function ProfileSettingsForm({ profile }: ProfileSettingsFormProp
 
         const formData = new FormData(e.currentTarget)
         const profileId = profile?.id
-        
+
         if (!profileId) {
             setError("Profile data is missing. Please try logging in again.")
             setIsUpdating(false)
@@ -32,7 +32,7 @@ export default function ProfileSettingsForm({ profile }: ProfileSettingsFormProp
 
         // Ensure role is preserved
         formData.append('role', profile?.Role || profile?.role || 'member')
-        
+
         const result = await updateAdmin(profileId, formData)
 
         if (result?.error) {
@@ -50,7 +50,7 @@ export default function ProfileSettingsForm({ profile }: ProfileSettingsFormProp
         <form onSubmit={handleSubmit} className="space-y-8">
             <div className="flex items-center gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">Personnel Data</h2>
+                <h2 className="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-400">Personnel Data</h2>
             </div>
 
             <div className="grid grid-cols-2 gap-6">
@@ -67,7 +67,7 @@ export default function ProfileSettingsForm({ profile }: ProfileSettingsFormProp
             <div className="space-y-6 pt-4 border-t border-white/5">
                 <div className="flex items-center gap-3">
                     <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                    <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">Secure Access</h2>
+                    <h2 className="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-400">Secure Access</h2>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -93,7 +93,7 @@ export default function ProfileSettingsForm({ profile }: ProfileSettingsFormProp
                     {error}
                 </div>
             )}
-            
+
             {success && (
                 <div className="p-4 rounded-2xl bg-green-500/10 border border-green-500/20 text-green-500 text-[10px] font-bold uppercase tracking-widest flex items-center gap-2">
                     <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />

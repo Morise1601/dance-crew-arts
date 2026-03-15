@@ -40,7 +40,7 @@ export function AuthForm() {
 
             {/* Left Branding Panel */}
             <div className="hidden lg:flex flex-col justify-between w-[40%] p-12 relative z-10 border-r border-white/5">
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0, x: -15 }}
                     animate={{ opacity: 1, x: 0 }}
                     className="flex items-center gap-3"
@@ -64,8 +64,8 @@ export function AuthForm() {
                             Portal
                         </h1>
                     </motion.div>
-                    
-                    <motion.p 
+
+                    <motion.p
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.4 }}
@@ -74,7 +74,7 @@ export function AuthForm() {
                         Manage your studio artists, portfolio, and website content in one place.
                     </motion.p>
 
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0, y: 15 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.6 }}
@@ -101,7 +101,7 @@ export function AuthForm() {
 
             {/* Right Form Panel */}
             <div className="flex-1 flex items-center justify-center p-6 lg:p-12 relative z-10">
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="w-full max-w-[360px]"
@@ -166,7 +166,7 @@ export function AuthForm() {
                                 <motion.div
                                     initial={{ opacity: 0, y: -5 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    className="text-primary text-[9px] font-black bg-primary/5 p-3 rounded-lg border border-primary/20 flex items-center gap-2 uppercase tracking-wider"
+                                    className="text-primary text-[9px] font-bold bg-primary/5 p-3 rounded-lg border border-primary/20 flex items-center gap-2 uppercase tracking-wider"
                                 >
                                     <div className="w-1 h-1 rounded-full bg-primary animate-pulse" />
                                     {error}
@@ -196,7 +196,7 @@ export function AuthForm() {
                         </button>
                     </form>
 
-                    <p className="text-center text-[8px] text-gray-700 uppercase tracking-[0.3em] font-black mt-10">
+                    <p className="text-center text-[8px] text-gray-700 uppercase tracking-[0.3em] font-bold mt-10">
                         Secure Authentication Pipeline
                     </p>
                 </motion.div>

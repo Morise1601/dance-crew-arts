@@ -38,7 +38,7 @@ export function ContactForm() {
 
             <AnimatePresence mode="wait">
                 {success ? (
-                    <motion.div 
+                    <motion.div
                         key="success"
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
@@ -50,11 +50,11 @@ export function ContactForm() {
                             <div className="absolute inset-0 rounded-full border-t border-primary animate-spin-slow" />
                             <CheckCircle2 className="w-10 h-10 text-primary" />
                         </div>
-                        <h2 className="text-3xl md:text-5xl font-black text-white mb-4 uppercase tracking-tighter">Transmission <br /><span className="text-primary italic font-serif">Successful.</span></h2>
+                        <h2 className="text-3xl md:text-5xl font-bold text-white mb-4 uppercase tracking-tighter">Transmission <br /><span className="text-primary italic font-serif">Successful.</span></h2>
                         <p className="text-gray-400 font-light max-w-sm mb-12 text-sm md:text-base">We have received your coordinates. Our operatives will connect with you shortly.</p>
-                        
-                        <Button 
-                            variant="outline" 
+
+                        <Button
+                            variant="outline"
                             className="w-full max-w-xs border-white/10 text-white hover:bg-white hover:text-black h-14 uppercase tracking-[0.2em] font-bold text-[10px] transition-all duration-500"
                             onClick={() => setSuccess(false)}
                         >
@@ -62,31 +62,31 @@ export function ContactForm() {
                         </Button>
                     </motion.div>
                 ) : (
-                    <motion.form 
+                    <motion.form
                         key="form"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
                         transition={{ duration: 0.5 }}
-                        onSubmit={handleSubmit} 
+                        onSubmit={handleSubmit}
                         className="relative z-10 space-y-10"
                     >
                         <div className="space-y-2 mb-12">
                             <h3 className="text-2xl font-serif italic text-white/50">Send a</h3>
-                            <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter text-white leading-none">Transmission.</h2>
+                            <h2 className="text-4xl md:text-5xl font-bold uppercase tracking-tighter text-white leading-none">Transmission.</h2>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
                             <div className="relative group">
-                                <Input 
-                                    id="firstName" 
-                                    name="firstName" 
-                                    placeholder=" " 
-                                    required 
-                                    className="peer bg-transparent border-0 border-b border-white/20 rounded-none h-12 text-lg text-white font-light focus:ring-0 focus:border-primary px-0 transition-colors placeholder:text-transparent focus:placeholder:text-transparent" 
+                                <Input
+                                    id="firstName"
+                                    name="firstName"
+                                    placeholder=" "
+                                    required
+                                    className="peer bg-transparent border-0 border-b border-white/20 rounded-none h-12 text-lg text-white font-light focus:ring-0 focus:border-primary px-0 transition-colors placeholder:text-transparent focus:placeholder:text-transparent"
                                 />
-                                <Label 
-                                    htmlFor="firstName" 
+                                <Label
+                                    htmlFor="firstName"
                                     className="absolute left-0 top-3 text-gray-500 text-xs font-bold uppercase tracking-widest transition-all peer-focus:-top-4 peer-focus:text-[9px] peer-focus:text-primary peer-valid:-top-4 peer-valid:text-[9px]"
                                 >
                                     First Name
@@ -94,15 +94,15 @@ export function ContactForm() {
                             </div>
 
                             <div className="relative group">
-                                <Input 
-                                    id="lastName" 
-                                    name="lastName" 
-                                    placeholder=" " 
-                                    required 
-                                    className="peer bg-transparent border-0 border-b border-white/20 rounded-none h-12 text-lg text-white font-light focus:ring-0 focus:border-primary px-0 transition-colors placeholder:text-transparent focus:placeholder:text-transparent" 
+                                <Input
+                                    id="lastName"
+                                    name="lastName"
+                                    placeholder=" "
+                                    required
+                                    className="peer bg-transparent border-0 border-b border-white/20 rounded-none h-12 text-lg text-white font-light focus:ring-0 focus:border-primary px-0 transition-colors placeholder:text-transparent focus:placeholder:text-transparent"
                                 />
-                                <Label 
-                                    htmlFor="lastName" 
+                                <Label
+                                    htmlFor="lastName"
                                     className="absolute left-0 top-3 text-gray-500 text-xs font-bold uppercase tracking-widest transition-all peer-focus:-top-4 peer-focus:text-[9px] peer-focus:text-primary peer-valid:-top-4 peer-valid:text-[9px]"
                                 >
                                     Last Name
@@ -111,16 +111,16 @@ export function ContactForm() {
                         </div>
 
                         <div className="relative group">
-                            <Input 
-                                id="email" 
-                                name="email" 
-                                type="email" 
-                                placeholder=" " 
-                                required 
-                                className="peer bg-transparent border-0 border-b border-white/20 rounded-none h-12 text-lg text-white font-light focus:ring-0 focus:border-primary px-0 transition-colors placeholder:text-transparent focus:placeholder:text-transparent" 
+                            <Input
+                                id="email"
+                                name="email"
+                                type="email"
+                                placeholder=" "
+                                required
+                                className="peer bg-transparent border-0 border-b border-white/20 rounded-none h-12 text-lg text-white font-light focus:ring-0 focus:border-primary px-0 transition-colors placeholder:text-transparent focus:placeholder:text-transparent"
                             />
-                            <Label 
-                                htmlFor="email" 
+                            <Label
+                                htmlFor="email"
                                 className="absolute left-0 top-3 text-gray-500 text-xs font-bold uppercase tracking-widest transition-all peer-focus:-top-4 peer-focus:text-[9px] peer-focus:text-primary peer-valid:-top-4 peer-valid:text-[9px]"
                             >
                                 Electronic Mail Address
@@ -141,16 +141,16 @@ export function ContactForm() {
                                     target.style.height = target.scrollHeight + 'px';
                                 }}
                             ></textarea>
-                            <Label 
-                                htmlFor="message" 
+                            <Label
+                                htmlFor="message"
                                 className="absolute left-0 top-8 text-gray-500 text-xs font-bold uppercase tracking-widest transition-all peer-focus:top-0 peer-focus:text-[9px] peer-focus:text-primary peer-valid:top-0 peer-valid:text-[9px]"
                             >
                                 Your Message Payload
                             </Label>
                         </div>
-                        
+
                         {error && (
-                            <motion.div 
+                            <motion.div
                                 initial={{ opacity: 0, height: 0 }}
                                 animate={{ opacity: 1, height: 'auto' }}
                                 className="text-red-500 text-[10px] font-bold uppercase tracking-[0.2em] bg-red-500/10 p-4 border-l-2 border-red-500"
@@ -160,10 +160,10 @@ export function ContactForm() {
                         )}
 
                         <div className="pt-8 flex justify-end">
-                            <Button 
+                            <Button
                                 disabled={isSubmitting}
-                                type="submit" 
-                                className="group relative w-full md:w-auto bg-white text-black hover:bg-primary hover:text-black font-black uppercase tracking-[0.3em] text-[10px] h-14 px-12 transition-all duration-500 overflow-hidden shadow-[0_0_30px_rgba(255,255,255,0.05)] hover:shadow-[0_0_40px_rgba(227,157,28,0.3)]"
+                                type="submit"
+                                className="group relative w-full md:w-auto bg-white text-black hover:bg-primary hover:text-black font-bold uppercase tracking-[0.3em] text-[10px] h-14 px-12 transition-all duration-500 overflow-hidden shadow-[0_0_30px_rgba(255,255,255,0.05)] hover:shadow-[0_0_40px_rgba(227,157,28,0.3)]"
                             >
                                 <span className="relative z-10 flex items-center justify-center gap-3">
                                     {isSubmitting ? 'Transmitting...' : 'Dispatch Signal'}

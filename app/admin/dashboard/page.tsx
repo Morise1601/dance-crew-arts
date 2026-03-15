@@ -77,12 +77,12 @@ export default async function DashboardPage() {
                             <div className="flex gap-4">
                                 <div className="bg-black/40 border border-white/10 rounded-2xl p-4 flex flex-col items-center justify-center min-w-[100px] backdrop-blur-xl">
                                     <Zap className="w-5 h-5 text-primary mb-1" />
-                                    <span className="text-[10px] uppercase font-black tracking-widest text-gray-500">Uptime</span>
+                                    <span className="text-[10px] uppercase font-bold tracking-widest text-gray-500">Uptime</span>
                                     <span className="text-sm font-serif font-bold">99.9%</span>
                                 </div>
                                 <div className="bg-black/40 border border-white/10 rounded-2xl p-4 flex flex-col items-center justify-center min-w-[100px] backdrop-blur-xl">
                                     <ShieldAlert className="w-5 h-5 text-green-500 mb-1" />
-                                    <span className="text-[10px] uppercase font-black tracking-widest text-gray-500">Security</span>
+                                    <span className="text-[10px] uppercase font-bold tracking-widest text-gray-500">Security</span>
                                     <span className="text-sm font-serif font-bold">Encrypted</span>
                                 </div>
                             </div>
@@ -103,13 +103,13 @@ export default async function DashboardPage() {
                                         <div className="p-3 bg-white/5 rounded-2xl border border-white/10 group-hover:border-primary/20 transition-colors">
                                             <stat.icon className="w-6 h-6 text-primary" />
                                         </div>
-                                        <div className="text-[10px] font-black tracking-widest px-2 py-1 rounded bg-white/5 text-gray-400 group-hover:text-primary transition-colors">
+                                        <div className="text-[10px] font-bold tracking-widest px-2 py-1 rounded bg-white/5 text-gray-400 group-hover:text-primary transition-colors">
                                             {stat.trend}
                                         </div>
                                     </div>
 
                                     <div>
-                                        <p className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-500 mb-1">{stat.label}</p>
+                                        <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-gray-500 mb-1">{stat.label}</p>
                                         <div className="flex items-baseline gap-2">
                                             <span className="text-4xl font-serif text-white group-hover:scale-105 transition-transform origin-left duration-500">{stat.value}</span>
                                             <div className="w-1 h-1 rounded-full bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -165,7 +165,7 @@ export default async function DashboardPage() {
                                                         asset.type === 'owner' ? <UserCircle className="w-6 h-6 text-primary" /> :
                                                             <ImageIcon className="w-6 h-6 text-primary" />}
                                                 </div>
-                                                <div className="absolute -top-1 -right-1 w-4 h-4 bg-primary rounded-full border-2 border-black flex items-center justify-center text-[7px] text-black font-black">
+                                                <div className="absolute -top-1 -right-1 w-4 h-4 bg-primary rounded-full border-2 border-black flex items-center justify-center text-[7px] text-black font-bold">
                                                     {i + 1}
                                                 </div>
                                             </div>
@@ -173,7 +173,7 @@ export default async function DashboardPage() {
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex items-center gap-3 mb-1">
                                                     <p className="font-serif text-lg tracking-tight text-white group-hover:text-primary transition-colors truncate">{asset.name}</p>
-                                                    <span className="text-[9px] font-black uppercase tracking-widest bg-white/5 px-2 py-0.5 rounded text-gray-500 border border-white/5">{asset.type}</span>
+                                                    <span className="text-[9px] font-bold uppercase tracking-widest bg-white/5 px-2 py-0.5 rounded text-gray-500 border border-white/5">{asset.type}</span>
                                                 </div>
                                                 <p className="text-[9px] font-bold uppercase text-gray-700 flex items-center gap-2">
                                                     Status: Active
@@ -181,11 +181,11 @@ export default async function DashboardPage() {
                                             </div>
 
                                             <div className="hidden md:flex flex-col items-end gap-1 shrink-0">
-                                                <div className="flex items-center gap-2 text-[8px] font-black uppercase tracking-widest text-primary italic">
+                                                <div className="flex items-center gap-2 text-[8px] font-bold uppercase tracking-widest text-primary italic">
                                                     <Zap className="w-3 h-3" />
                                                     Live
                                                 </div>
-                                                <div className="flex items-center gap-2 text-[10px] text-gray-600 uppercase tracking-[0.2em] font-black">
+                                                <div className="flex items-center gap-2 text-[10px] text-gray-600 uppercase tracking-[0.2em] font-bold">
                                                     <Clock className="w-3.5 h-3.5" />
                                                     {new Date(asset.created_at).toLocaleDateString()}
                                                 </div>
@@ -222,7 +222,7 @@ export default async function DashboardPage() {
                                                 <action.icon className="w-4 h-4 text-primary group-hover/btn:text-black group-hover/btn:scale-110 transition-all" />
                                             </div>
                                             <div>
-                                                <p className="text-[9px] font-black uppercase tracking-[0.2em] text-white group-hover/btn:text-black">{action.label}</p>
+                                                <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-white group-hover/btn:text-black">{action.label}</p>
                                                 <p className="text-[9px] text-gray-600 font-bold group-hover/btn:text-black/60 italic">{action.desc}</p>
                                             </div>
                                         </a>
@@ -245,7 +245,7 @@ export default async function DashboardPage() {
                                         { label: 'Artist Profiles', count: ownerCount, total: totalAssets, color: '#6366F1' },
                                     ].map((item) => (
                                         <div key={item.label}>
-                                            <div className="flex justify-between text-[8px] font-black uppercase tracking-[0.3em] mb-2.5">
+                                            <div className="flex justify-between text-[8px] font-bold uppercase tracking-[0.3em] mb-2.5">
                                                 <span className="text-gray-500 italic">{item.label}</span>
                                                 <span className="text-white bg-white/5 px-2 py-0.5 rounded border border-white/5">{item.count}</span>
                                             </div>

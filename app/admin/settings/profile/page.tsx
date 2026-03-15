@@ -31,7 +31,7 @@ export default async function ProfileSettingsPage() {
                         <div className="relative z-10">
                             <div className="flex items-center gap-2 mb-4">
                                 <div className="w-8 h-1 bg-primary rounded-full" />
-                                <span className="text-primary font-black text-[10px] tracking-[0.4em] uppercase">User Profile</span>
+                                <span className="text-primary font-bold text-[10px] tracking-[0.4em] uppercase">User Profile</span>
                             </div>
                             <h1 className="text-3xl lg:text-4xl font-serif tracking-tighter text-white leading-none">
                                 My <span className="text-primary italic">Profile</span>
@@ -65,7 +65,7 @@ export default async function ProfileSettingsPage() {
                                     {adminProfile?.first_name} {adminProfile?.last_name}
                                 </h3>
                                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20">
-                                    <span className="text-[9px] font-black uppercase tracking-widest text-primary">{(adminProfile?.Role || adminProfile?.role)}</span>
+                                    <span className="text-[9px] font-bold uppercase tracking-widest text-primary">{(adminProfile?.Role || adminProfile?.role)}</span>
                                 </div>
 
                                 <div className="mt-8 pt-8 border-t border-white/5 space-y-4 text-left">

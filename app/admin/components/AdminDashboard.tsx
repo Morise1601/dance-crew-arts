@@ -12,6 +12,7 @@ import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetT
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { uploadAsset, deleteAsset, logout, signup, deleteAdmin, updateAsset, updateAdmin } from '../actions'
+import { toast } from 'sonner'
 
 interface Asset {
     id: string
@@ -63,9 +64,10 @@ export function AdminDashboard({ assets, initialAdmins }: { assets: Asset[], ini
 
         if (result?.error) {
             setAdminError(result.error)
+            toast.error(result.error)
         } else {
-            alert('Admin created successfully!')
-                ; (e.target as HTMLFormElement).reset()
+            toast.success('Admin created successfully!')
+            ; (e.target as HTMLFormElement).reset()
         }
         setIsCreatingAdmin(false)
     }
@@ -80,7 +82,9 @@ export function AdminDashboard({ assets, initialAdmins }: { assets: Asset[], ini
 
         if (result?.error) {
             setUploadError(result.error)
+            toast.error(result.error)
         } else {
+            toast.success('Asset uploaded successfully')
             ; (e.target as HTMLFormElement).reset()
         }
         setIsUploading(false)
@@ -91,7 +95,9 @@ export function AdminDashboard({ assets, initialAdmins }: { assets: Asset[], ini
 
         const result = await deleteAsset(deleteId, deletePath)
         if (result?.error) {
-            alert(result.error)
+            toast.error(result.error)
+        } else {
+            toast.success('Asset deleted successfully')
         }
         setDeleteId(null)
         setDeletePath(null)
@@ -101,8 +107,9 @@ export function AdminDashboard({ assets, initialAdmins }: { assets: Asset[], ini
         if (!confirm(`Revoke access for ${email}?`)) return
         const res = await deleteAdmin(id)
         if (res.error) {
-            alert(res.error)
+            toast.error(res.error)
         } else {
+            toast.success('Admin access revoked')
             setAdmins(prev => prev.filter(a => a.id !== id))
         }
     }
@@ -313,8 +320,12 @@ export function AdminDashboard({ assets, initialAdmins }: { assets: Asset[], ini
                                                                     e.preventDefault();
                                                                     const name = new FormData(e.currentTarget).get('editName') as string;
                                                                     const res = await updateAsset(asset.id, name);
-                                                                    if (res.error) alert(res.error);
-                                                                    else window.location.reload();
+                                                                    if (res.error) {
+                                                                        toast.error(res.error);
+                                                                    } else {
+                                                                        toast.success('Asset updated successfully');
+                                                                        window.location.reload();
+                                                                    }
                                                                 }} className="space-y-4">
                                                                     <div className="space-y-2">
                                                                         <Label className="text-[10px] font-bold uppercase text-gray-400">Display Title</Label>
@@ -470,8 +481,12 @@ export function AdminDashboard({ assets, initialAdmins }: { assets: Asset[], ini
                                                                         e.preventDefault();
                                                                         const formData = new FormData(e.currentTarget);
                                                                         const res = await updateAdmin(admin.id, formData);
-                                                                        if (res.error) alert(res.error);
-                                                                        else window.location.reload();
+                                                                        if (res.error) {
+                                                                            toast.error(res.error);
+                                                                        } else {
+                                                                            toast.success('Admin profile updated');
+                                                                            window.location.reload();
+                                                                        }
                                                                     }} className="space-y-4">
                                                                         <div className="grid grid-cols-2 gap-4">
                                                                             <div className="space-y-2">
@@ -504,7 +519,11 @@ export function AdminDashboard({ assets, initialAdmins }: { assets: Asset[], ini
                                                             onClick={async () => {
                                                                 if (confirm(`Revoke access for ${admin.email}?`)) {
                                                                     const res = await deleteAdmin(admin.id);
-                                                                    if (res.error) alert(res.error);
+                                                                    if (res.error) {
+                                                                        toast.error(res.error);
+                                                                    } else {
+                                                                        toast.success('Admin access revoked');
+                                                                    }
                                                                 }
                                                             }}
                                                             className="h-10 w-10 text-destructive hover:bg-destructive/20"
