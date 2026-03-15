@@ -118,8 +118,7 @@ export default function AboutClient({ founderImg, coFounderImg }: AboutClientPro
                             <div className="space-y-3 text-gray-400 text-sm leading-relaxed max-w-lg">
                                 <p>
                                     Assists in choreography creation and guides students during rehearsals.
-                                    Dance Costume & Props Designer
-                                    Designs and prepares dance costumes and stage props for performances.
+                                    Dance Costume & Props Designer.
                                 </p>
                             </div>
                         </div>
