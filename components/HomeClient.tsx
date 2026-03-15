@@ -55,7 +55,7 @@ export default function HomeClient({ founderImg, members: initialMembers }: Home
                                 if (exists) {
                                     return prev.map(m => m.id === newPayload.id ? newPayload : m);
                                 } else {
-                                    return [newPayload, ...prev].sort((a,b) => new Date(b.id).getTime() - new Date(a.id).getTime());
+                                    return [newPayload, ...prev].sort((a, b) => new Date(b.id).getTime() - new Date(a.id).getTime());
                                 }
                             });
                         } else {
@@ -76,7 +76,7 @@ export default function HomeClient({ founderImg, members: initialMembers }: Home
 
     return (
         <div ref={containerRef} className="flex flex-col min-h-screen bg-[#020202] text-white selection:bg-primary/30 selection:text-white overflow-hidden">
-            
+
             {/* ─── HERO BANNER ─── */}
             <section className="relative w-full h-screen min-h-[600px] flex items-center overflow-hidden">
                 {/* Parallax background */}
@@ -85,10 +85,10 @@ export default function HomeClient({ founderImg, members: initialMembers }: Home
                     className="absolute inset-0 z-0"
                 >
                     <Image
-                        src="/fire_dance_hero.png"
+                        src="/banner.png"
                         alt="D'Art Crew Hero"
                         fill
-                        className="object-cover object-center opacity-45 mix-blend-screen"
+                        className="object-contain object-center"
                         priority
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#020202] via-[#020202]/50 to-transparent" />
@@ -112,7 +112,7 @@ export default function HomeClient({ founderImg, members: initialMembers }: Home
                         {/* Left: Brand + Heading */}
                         <div className="max-w-xl">
                             {/* Badge */}
-                            <motion.div
+                            {/* <motion.div
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.7, delay: 0.15 }}
@@ -120,7 +120,7 @@ export default function HomeClient({ founderImg, members: initialMembers }: Home
                             >
                                 <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_10px_rgba(227,157,28,0.8)]" />
                                 <span className="text-primary font-bold tracking-[0.35em] text-[10px] uppercase">Rhythmic Elite Academy</span>
-                            </motion.div>
+                            </motion.div> */}
 
                             {/* Main Heading */}
                             <motion.h1
@@ -129,12 +129,12 @@ export default function HomeClient({ founderImg, members: initialMembers }: Home
                                 transition={{ duration: 0.9, delay: 0.25 }}
                                 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold tracking-tight leading-[1.05] mb-4"
                             >
-                                Cinematic{" "}
+                                D ART{" "}
                                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-yellow-300 to-primary/70">
-                                    Motion.
+                                    CREW
                                 </span>
                                 <br />
-                                <span className="text-white/60 italic font-light text-2xl md:text-3xl">Redefining Dance Arts.</span>
+                                <span className="text-white/60 italic font-light text-2xl md:text-3xl">Dance • Artistic • Rhythm • Technique</span>
                             </motion.h1>
 
                             {/* Sub line */}
@@ -144,12 +144,12 @@ export default function HomeClient({ founderImg, members: initialMembers }: Home
                                 transition={{ duration: 0.8, delay: 0.4 }}
                                 className="text-sm text-gray-400 font-light leading-relaxed border-l-2 border-primary/40 pl-4 max-w-md"
                             >
-                                Where explosive physical energy meets absolute fluid control. Train with the best, perform on any stage.
+                                Where Passion Meets Performance
                             </motion.p>
                         </div>
 
                         {/* Right: CTA Buttons */}
-                        <motion.div
+                        {/* <motion.div
                             initial={{ opacity: 0, x: 30 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.8, delay: 0.5 }}
@@ -167,7 +167,7 @@ export default function HomeClient({ founderImg, members: initialMembers }: Home
                                     Discover Us
                                 </Button>
                             </Link>
-                        </motion.div>
+                        </motion.div> */}
                     </motion.div>
 
                     {/* Stats bar */}
@@ -178,13 +178,13 @@ export default function HomeClient({ founderImg, members: initialMembers }: Home
                         className="mt-10 flex flex-wrap gap-x-8 gap-y-3"
                     >
                         {[
-                            { value: "10K+", label: "Students Trained" },
-                            { value: "50+", label: "Awards Won" },
-                            { value: "12+", label: "Years of Excellence" },
+                            { value: "500+", label: "Students Trained" },
+                            { value: "100+", label: "Choreographies" },
+                            { value: "5+", label: "Years of Experience" },
                         ].map((stat, i) => (
                             <div key={i} className="flex items-center gap-3">
                                 <span className="text-lg font-bold text-primary">{stat.value}</span>
-                                <span className="text-[11px] text-gray-500 uppercase tracking-wider">{stat.label}</span>
+                                <span className="text-[11px] text-white uppercase tracking-wider">{stat.label}</span>
                                 {i < 2 && <span className="hidden sm:block w-px h-5 bg-white/10 ml-1" />}
                             </div>
                         ))}
@@ -214,12 +214,9 @@ export default function HomeClient({ founderImg, members: initialMembers }: Home
                                 />
                                 <div className="absolute bottom-5 left-5 z-20">
                                     <div className="bg-black/50 backdrop-blur-md border border-white/10 rounded-xl p-3.5 flex items-center gap-3 group-hover:border-primary/40 transition-colors duration-500">
-                                        <div className="w-9 h-9 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center">
-                                            <Play className="w-4 h-4 text-primary ml-0.5" />
-                                        </div>
                                         <div>
-                                            <p className="text-[9px] font-bold uppercase tracking-widest text-primary">Watch Manifesto</p>
-                                            <p className="text-[9px] text-gray-400 mt-0.5">2 min highlight reel</p>
+                                            <p className="text-[9px] font-bold uppercase tracking-widest text-primary">Anto Reny</p>
+                                            <p className="text-[9px] text-gray-400 mt-0.5">Founder</p>
                                         </div>
                                     </div>
                                 </div>
@@ -241,8 +238,8 @@ export default function HomeClient({ founderImg, members: initialMembers }: Home
                                     <span className="text-primary font-bold text-[10px] uppercase tracking-[0.3em]">The Philosophy</span>
                                 </div>
                                 <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold uppercase tracking-tight leading-tight">
-                                    Beyond{" "}
-                                    <span className="text-white/30 italic font-serif">Choreography.</span>
+                                    About the{" "}
+                                    <span className="text-white/30 italic font-serif">Founder.</span>
                                 </h2>
                             </motion.div>
 
@@ -254,19 +251,9 @@ export default function HomeClient({ founderImg, members: initialMembers }: Home
                                 className="space-y-5 text-gray-400 text-sm leading-relaxed font-light"
                             >
                                 <p>
-                                    We don&apos;t just teach steps; we architect experiences. Every movement is a calculated expression of power, precision, and raw emotion.
+                                    Anto Reny is the founder and choreographer of D Art Crew Dance Academy. With a deep passion for dance and stage performance, he has been training students and creating energetic choreographies for school annual days, cultural programs, and stage shows.
+                                    He specializes in Hip Hop, Freestyle, Folk, and Stage Choreography, focusing on helping students build confidence, rhythm, and strong stage presence. Through D Art Crew, his mission is to inspire young dancers to express themselves through movement and perform with passion.
                                 </p>
-
-                                <div className="grid grid-cols-2 gap-5 pt-4 border-t border-white/5">
-                                    <div className="p-4 bg-white/[0.02] border border-white/5 rounded-xl hover:border-primary/20 transition-colors">
-                                        <h4 className="text-primary font-bold uppercase tracking-widest text-[10px] mb-1.5">Isolation</h4>
-                                        <p className="text-xs text-gray-500">Absolute muscular mastery. Separating elements to create illusion.</p>
-                                    </div>
-                                    <div className="p-4 bg-white/[0.02] border border-white/5 rounded-xl hover:border-primary/20 transition-colors">
-                                        <h4 className="text-primary font-bold uppercase tracking-widest text-[10px] mb-1.5">Dynamics</h4>
-                                        <p className="text-xs text-gray-500">The stark contrast between explosive speed and complete stillness.</p>
-                                    </div>
-                                </div>
 
                                 <Link href="/about" className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white hover:text-primary transition-colors group">
                                     Learn More About Us

@@ -44,7 +44,7 @@ export default function AboutClient({ founderImg, coFounderImg }: AboutClientPro
                                 className="object-cover grayscale hover:grayscale-0 transition-all duration-1000"
                             />
                             <div className="absolute bottom-5 left-5 bg-primary text-black px-5 py-2.5 rounded-lg shadow-xl">
-                                <h4 className="font-bold text-xs uppercase tracking-widest">Est. 2012</h4>
+                                <h4 className="font-bold text-xs uppercase tracking-widest">Est. 2017</h4>
                             </div>
                         </motion.div>
 
@@ -54,25 +54,31 @@ export default function AboutClient({ founderImg, coFounderImg }: AboutClientPro
                                 <span className="text-[9px] font-black uppercase tracking-[0.3em] text-primary">Chief Visionary</span>
                             </div>
                             <h2 className="text-2xl md:text-3xl font-bold uppercase tracking-tight">
-                                Built for <span className="text-secondary italic">Greatness.</span>
+                                About the <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-yellow-300 to-primary/70">Founder.</span>
                             </h2>
                             <div className="space-y-3 text-gray-400 text-sm leading-relaxed max-w-lg">
                                 <p>
-                                    What started as a basement crew has evolved into a powerhouse. We believe dance is movement made fire.
-                                </p>
-                                <p>
-                                    We don&apos;t just teach choreography; we instill discipline and raw artistry. We&apos;ve trained champions and creators who seek their own rhythm.
+                                    Anto Reny is the founder and choreographer of D Art Crew Dance Academy. With a deep passion for dance and stage performance, he has been training students and creating energetic choreographies for school annual days, cultural programs, and stage shows.
+                                    He specializes in Hip Hop, Freestyle, Folk, and Stage Choreography, focusing on helping students build confidence, rhythm, and strong stage presence. Through D Art Crew, his mission is to inspire young dancers to express themselves through movement and perform with passion.
                                 </p>
                             </div>
-
+                            <h2 className="text-2xl md:text-3xl font-bold uppercase tracking-tight">
+                                Experience <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-yellow-300 to-primary/70">& </span>Achievements
+                            </h2>
+                            <p className="text-gray-400 text-sm leading-relaxed max-w-lg">Successfully choreographed school annual day programs for multiple institutions
+                                Conducted large group choreographies with 100+ students
+                                Experience in stage choreography, cultural events, and dance training
+                                Founder of D Art Crew, training students in modern and folk dance styles
+                                Mission
+                                To create confident performers and inspire students to explore the true art of dance.</p>
                             <div className="pt-5 grid grid-cols-2 gap-4">
                                 <div className="p-4 bg-white/[0.02] border border-white/5 rounded-xl text-center hover:border-primary/20 transition-colors">
-                                    <div className="text-2xl font-bold text-primary">50+</div>
-                                    <div className="text-[8px] uppercase tracking-widest font-black text-gray-500 mt-1">Awards</div>
+                                    <div className="text-2xl font-bold text-primary">100+</div>
+                                    <div className="text-[8px] uppercase tracking-widest font-black text-gray-500 mt-1">Choreographies</div>
                                 </div>
                                 <div className="p-4 bg-white/[0.02] border border-white/5 rounded-xl text-center hover:border-primary/20 transition-colors">
-                                    <div className="text-2xl font-bold text-primary">10k+</div>
-                                    <div className="text-[8px] uppercase tracking-widest font-black text-gray-500 mt-1">Artists</div>
+                                    <div className="text-2xl font-bold text-primary">5+</div>
+                                    <div className="text-[8px] uppercase tracking-widest font-black text-gray-500 mt-1">Experience</div>
                                 </div>
                             </div>
                         </div>
