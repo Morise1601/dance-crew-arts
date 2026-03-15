@@ -1,85 +1,98 @@
-import { Mail, MapPin, Phone } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Mail, MapPin, Phone, ArrowUpRight } from "lucide-react";
+import { getAppSettings } from "@/app/admin/actions";
+import { ContactForm } from "./ContactForm";
 
-export default function ContactPage() {
+export default async function ContactPage() {
+    const { data: settings } = await getAppSettings();
+
     return (
-        <div className="bg-black text-white min-h-screen pt-32 pb-24">
-            <div className="container mx-auto px-4 md:px-8 max-w-7xl">
-                <div className="text-center mb-16">
-                    <h1 className="text-5xl md:text-7xl font-bold uppercase tracking-tighter drop-shadow-lg mb-6">
-                        Get In <span className="text-primary">Touch</span>
-                    </h1>
-                    <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-                        Ready to ignite your passion? Contact us for private lessons, event bookings, or general inquiries.
-                    </p>
-                </div>
+        <div className="bg-[#020202] text-white min-h-screen selection:bg-primary/30 relative overflow-hidden pt-24 pb-16">
+            {/* Cinematic Background Elements */}
+            <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[150px] -z-10 pointer-events-none mix-blend-screen" />
+            <div className="absolute bottom-[-20%] left-[-10%] w-[500px] h-[500px] bg-white/5 rounded-full blur-[120px] -z-10 pointer-events-none mix-blend-overlay" />
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-                    {/* Contact Form */}
-                    <div className="bg-[#050505] p-8 md:p-12 border border-white/10 relative">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 blur-[60px]" />
-                        <form className="relative z-10 space-y-6">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-2">
-                                    <label className="text-sm font-bold uppercase tracking-widest text-gray-400">First Name</label>
-                                    <input type="text" className="w-full bg-black border border-white/20 p-4 text-white focus:border-primary focus:outline-none transition-colors" placeholder="John" />
+            {/* Page Header */}
+            <div className="border-b border-white/5 pb-10 mb-14 relative z-10">
+                <div className="container mx-auto px-4 md:px-8 max-w-7xl">
+                    <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full border border-white/10 bg-white/[0.02] backdrop-blur-md mb-5">
+                        <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                        <span className="text-primary font-bold tracking-[0.4em] text-[10px] uppercase">Frequency Complete</span>
+                    </div>
+                    <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold uppercase tracking-tight leading-tight mb-3">
+                        Connect <span className="font-serif italic text-white/50">With Us.</span>
+                    </h1>
+                    <p className="text-gray-500 text-sm max-w-xl leading-relaxed">Reach out and let&apos;s start a conversation about your dance journey.</p>
+                </div>
+            </div>
+
+            <div className="container mx-auto px-4 md:px-8 max-w-7xl relative z-10">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-14 lg:gap-20">
+                    {/* Information Module */}
+                    <div className="lg:col-span-5 flex flex-col justify-between">
+                        <div className="space-y-12">
+                            <div className="group relative">
+                                <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-3 flex items-center gap-2">
+                                    <MapPin size={11} />
+                                    Headquarters
+                                </h4>
+                                <p className="text-base font-light leading-relaxed text-gray-300 group-hover:text-white transition-colors duration-500 max-w-sm">
+                                    {settings?.founder_address || "123 Rhythm Avenue, Dance District, NY 10001"}
+                                </p>
+                            </div>
+
+                            <div className="group relative">
+                                <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-3 flex items-center gap-2">
+                                    <Phone size={11} />
+                                    Direct Line
+                                </h4>
+                                <div className="space-y-1.5">
+                                    {settings?.founder_contact?.length ? (
+                                        settings.founder_contact.map((phone: string, i: number) => (
+                                            <p key={i} className="text-base font-light text-gray-300 group-hover:text-white transition-colors duration-500">
+                                                +91 <span className="text-white font-bold">{phone.slice(0, 5)} {phone.slice(5)}</span>
+                                            </p>
+                                        ))
+                                    ) : (
+                                        <p className="text-base font-light text-gray-300 group-hover:text-white transition-colors duration-500">+91 <span className="text-white font-bold">98765 43210</span></p>
+                                    )}
                                 </div>
-                                <div className="space-y-2">
-                                    <label className="text-sm font-bold uppercase tracking-widest text-gray-400">Last Name</label>
-                                    <input type="text" className="w-full bg-black border border-white/20 p-4 text-white focus:border-primary focus:outline-none transition-colors" placeholder="Doe" />
+                            </div>
+
+                            <div className="group relative">
+                                <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-3 flex items-center gap-2">
+                                    <Mail size={11} />
+                                    Digital Signal
+                                </h4>
+                                <div className="space-y-1.5">
+                                    {settings?.founder_email?.length ? (
+                                        settings.founder_email.map((email: string, i: number) => (
+                                            <a key={i} href={`mailto:${email}`} className="text-sm font-light text-gray-300 hover:text-primary transition-colors duration-500 flex items-center gap-2.5 w-fit">
+                                                {email} <ArrowUpRight size={14} className="opacity-0 group-hover:opacity-100 -translate-x-3 group-hover:translate-x-0 transition-all duration-300" />
+                                            </a>
+                                        ))
+                                    ) : (
+                                        <a href="mailto:info@dancearts.com" className="text-sm font-light text-gray-300 hover:text-primary transition-colors duration-500 flex items-center gap-2.5 w-fit">
+                                            info@dancearts.com <ArrowUpRight size={14} className="opacity-0 group-hover:opacity-100 -translate-x-3 group-hover:translate-x-0 transition-all duration-300" />
+                                        </a>
+                                    )}
                                 </div>
                             </div>
-                            <div className="space-y-2">
-                                <label className="text-sm font-bold uppercase tracking-widest text-gray-400">Email Address</label>
-                                <input type="email" className="w-full bg-black border border-white/20 p-4 text-white focus:border-primary focus:outline-none transition-colors" placeholder="john@example.com" />
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-sm font-bold uppercase tracking-widest text-gray-400">Message</label>
-                                <textarea rows={5} className="w-full bg-black border border-white/20 p-4 text-white focus:border-primary focus:outline-none transition-colors" placeholder="Tell us how we can help..."></textarea>
-                            </div>
-                            <Button size="lg" className="w-full bg-primary hover:bg-white text-black font-bold uppercase tracking-widest text-lg h-16 transition-all duration-300">
-                                Send Message
-                            </Button>
-                        </form>
+                        </div>
+
+                        {/* Social Links */}
+                        <div className="mt-12 pt-8 border-t border-white/10 flex gap-6">
+                            {['Instagram', 'Twitter', 'YouTube'].map((social, idx) => (
+                                <a key={idx} href="#" className="text-[10px] font-bold uppercase tracking-widest text-gray-500 hover:text-white transition-colors relative group overflow-hidden">
+                                    <span className="relative z-10">{social}</span>
+                                    <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-primary group-hover:w-full transition-all duration-300" />
+                                </a>
+                            ))}
+                        </div>
                     </div>
 
-                    {/* Contact Info & Map */}
-                    <div className="space-y-12">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div className="flex flex-col items-start space-y-4">
-                                <div className="w-12 h-12 bg-primary/10 border border-primary/30 flex items-center justify-center text-primary">
-                                    <MapPin size={24} />
-                                </div>
-                                <div>
-                                    <h3 className="font-bold uppercase tracking-widest text-lg mb-2">Location</h3>
-                                    <p className="text-gray-400">123 Rhythm Avenue<br />Dance District, NY 10001</p>
-                                </div>
-                            </div>
-                            <div className="flex flex-col items-start space-y-4">
-                                <div className="w-12 h-12 bg-primary/10 border border-primary/30 flex items-center justify-center text-primary">
-                                    <Phone size={24} />
-                                </div>
-                                <div>
-                                    <h3 className="font-bold uppercase tracking-widest text-lg mb-2">Phone</h3>
-                                    <p className="text-gray-400">+1 (555) 123-4567<br />Mon-Fri, 9am - 8pm</p>
-                                </div>
-                            </div>
-                            <div className="flex flex-col items-start space-y-4">
-                                <div className="w-12 h-12 bg-primary/10 border border-primary/30 flex items-center justify-center text-primary">
-                                    <Mail size={24} />
-                                </div>
-                                <div>
-                                    <h3 className="font-bold uppercase tracking-widest text-lg mb-2">Email</h3>
-                                    <p className="text-gray-400">booking@dancearts.com<br />info@dancearts.com</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="h-64 md:h-80 bg-[#111] border border-white/10 relative overflow-hidden flex items-center justify-center">
-                            <span className="text-gray-500 font-bold uppercase tracking-widest">Map Placeholder</span>
-                            {/* Optional: Embed real iframe map here */}
-                            <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.02)_50%,transparent_75%,transparent_100%)] bg-[length:20px_20px] pointer-events-none" />
-                        </div>
+                    {/* Contact Form */}
+                    <div className="lg:col-span-7">
+                        <ContactForm />
                     </div>
                 </div>
             </div>

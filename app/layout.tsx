@@ -4,6 +4,7 @@ import "./globals.css";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { cn } from "@/lib/utils";
+import { getAppSettings } from "./admin/actions";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -22,15 +23,18 @@ export const metadata: Metadata = {
   description: "Unleash your rhythm at D'Art Crew. Book classes, connect with instructors, and transform your artistic dance journey.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { data: settings } = await getAppSettings();
+  const logoUrl = settings?.logo_url || null;
+
   return (
     <html lang="en" className={cn("dark scroll-smooth", montserrat.variable, cinzel.variable)}>
       <body className="antialiased min-h-screen bg-background text-foreground flex flex-col font-sans overflow-x-hidden">
-        <Navbar />
+        <Navbar logoUrl={logoUrl} />
         <main className="flex-1 flex flex-col">
           {children}
         </main>

@@ -1,9 +1,18 @@
+"use client";
+
 import Link from "next/link";
 import { Facebook, Instagram, Twitter, Youtube } from "lucide-react";
 import Image from "next/image";
 import Logo from "@/public/D_arts_crew.png";
+import { usePathname } from "next/navigation";
 
 export function Footer() {
+    const pathname = usePathname();
+
+    if (pathname?.startsWith('/admin')) {
+        return null;
+    }
+
     return (
         <footer className="bg-[#050505] pt-20 pb-10 border-t border-white/5 relative overflow-hidden">
             {/* Golden Accent Line */}
@@ -75,9 +84,9 @@ export function Footer() {
                     </div>
                 </div>
 
-                <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between text-gray-500 text-sm">
+                <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between text-gray-500 text-[10px] md:text-sm text-center md:text-left space-y-4 md:space-y-0">
                     <p>&copy; {new Date().getFullYear()} D'Art Crew. All rights reserved.</p>
-                    <div className="mt-4 md:mt-0 space-x-4">
+                    <div className="flex items-center space-x-2 md:space-x-4">
                         <span>Built with passion & precision.</span>
                     </div>
                 </div>
