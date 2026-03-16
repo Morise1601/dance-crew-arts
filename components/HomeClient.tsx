@@ -433,9 +433,9 @@ export default function HomeClient({ founderImg, members: initialMembers, portfo
                         <p className="text-sm text-gray-500 mb-8 max-w-md mx-auto leading-relaxed">
                             Secure your spot in an upcoming session and begin your transformation with D&apos;Art Crew today.
                         </p>
-                        <Link href="/booking">
+                        <Link href="/contact">
                             <Button className="bg-white text-black hover:bg-primary hover:text-black px-10 h-12 text-xs font-bold uppercase tracking-[0.25em] transition-all duration-500 shadow-[0_0_40px_rgba(255,255,255,0.08)] hover:shadow-[0_0_40px_rgba(227,157,28,0.35)]">
-                                Initiate Booking
+                                Contact Us
                             </Button>
                         </Link>
                     </motion.div>

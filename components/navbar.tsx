@@ -70,11 +70,11 @@ export function Navbar({ logoUrl }: { logoUrl?: string | null }) {
                             {link.name}
                         </Link>
                     ))}
-                    <Link href="/booking">
+                    {/* <Link href="/booking">
                         <Button className="bg-primary hover:bg-primary/90 text-black font-bold uppercase tracking-wider px-8 h-12">
                             Book a Class
                         </Button>
-                    </Link>
+                    </Link> */}
                 </nav>
 
                 {/* Mobile Nav Toggle */}
@@ -104,11 +104,11 @@ export function Navbar({ logoUrl }: { logoUrl?: string | null }) {
                                     {link.name}
                                 </Link>
                             ))}
-                            <Link href="/booking" onClick={() => setMobileMenuOpen(false)}>
+                            {/* <Link href="/booking" onClick={() => setMobileMenuOpen(false)}>
                                 <Button className="bg-primary hover:bg-primary/90 text-black font-bold uppercase tracking-wider px-12 h-14 mt-4">
                                     Book a Class
                                 </Button>
-                            </Link>
+                            </Link> */}
                         </motion.div>
                     )}
                 </AnimatePresence>
