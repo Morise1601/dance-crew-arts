@@ -1,24 +1,16 @@
-import { createClient } from '@/lib/supabase/server'
+import { getCurrentProfile } from '@/lib/auth/server'
 import { redirect } from 'next/navigation'
 import { AdminSidebar } from '../../components/AdminSidebar'
-import { Settings, Upload, Image as ImageIcon, User, ChevronRight, Loader2 } from 'lucide-react'
-import { getAppSettings, updateAppSettings } from '../../actions'
+import { Settings } from 'lucide-react'
+import { getAppSettings } from '../../actions'
 import AppSettingsForm from './AppSettingsForm'
 
 export default async function AppSettingsPage() {
-    const supabase = await createClient()
-    const { data: userData } = await supabase.auth.getUser()
-    const user = userData?.user
+    const { user, profile: adminProfile, role } = await getCurrentProfile()
 
     if (!user) redirect('/admin')
 
-    const { data: adminProfile } = await supabase
-        .from('admins')
-        .select('*')
-        .eq('email', user.email)
-        .maybeSingle()
-
-    if (((adminProfile as any)?.Role || (adminProfile as any)?.role || '').toLowerCase() !== 'admin') {
+    if (role !== 'admin') {
         redirect('/admin/settings/profile')
     }
 
@@ -26,7 +18,7 @@ export default async function AppSettingsPage() {
 
     return (
         <div className="flex min-h-screen bg-[#050505] text-white selection:bg-primary/30">
-            <AdminSidebar />
+            <AdminSidebar initialProfile={adminProfile} />
 
             <main className="flex-1 pt-24 lg:pt-0 overflow-x-hidden">
                 <div className="p-6 lg:p-12 max-w-4xl mx-auto">

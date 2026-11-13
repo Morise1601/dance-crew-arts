@@ -1,25 +1,18 @@
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
+import { getCurrentProfile } from '@/lib/auth/server'
 import { redirect } from 'next/navigation'
 import { AdminSidebar } from '../components/AdminSidebar'
 import { FolderOpen, Users, Film, Image as ImageIcon, UserCircle, TrendingUp, Clock, Activity, Zap, ShieldAlert, Sparkles, LayoutDashboard } from 'lucide-react'
-import { motion } from 'framer-motion'
 
 export default async function DashboardPage() {
-    const supabase = await createClient()
-    const { data: userData } = await supabase.auth.getUser()
-    const user = userData?.user
+    const { user, profile: adminProfile, role } = await getCurrentProfile()
 
     if (!user) redirect('/admin')
 
-    const { data: adminProfile } = await supabase
-        .from('admins')
-        .select('*')
-        .eq('email', user.email)
-        .maybeSingle()
-    console.log('adminProfile', adminProfile)
-    if (((adminProfile as any)?.Role || (adminProfile as any)?.role || '').toLowerCase() !== 'admin') {
+    if (role !== 'admin') {
         redirect('/admin/settings/profile')
     }
+    const supabase = await createAdminClient()
 
     const { data: assets } = await supabase
         .from('portfolio_assets')
@@ -48,7 +41,7 @@ export default async function DashboardPage() {
 
     return (
         <div className="flex min-h-screen bg-[#050505] text-white selection:bg-primary/30">
-            <AdminSidebar />
+            <AdminSidebar initialProfile={adminProfile} />
 
             <main className="flex-1 pt-24 lg:pt-0 overflow-x-hidden">
                 {/* Background Decor */}
@@ -91,7 +84,7 @@ export default async function DashboardPage() {
 
                     {/* Stats Grid - Telemetry Style */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-12">
-                        {stats.map((stat, i) => (
+                            {stats.map((stat) => (
                             <div
                                 key={stat.label}
                                 className="relative bg-[#0A0A0A] border border-white/5 rounded-3xl p-8 overflow-hidden group hover:border-primary/30 transition-all duration-500"

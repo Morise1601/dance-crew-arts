@@ -4,6 +4,13 @@ import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { getCurrentProfile, requireAdmin } from '@/lib/auth/server'
+import { normalizeAdminRole } from '@/lib/auth/roles'
+
+export async function getSidebarProfile() {
+    const { profile, role } = await getCurrentProfile()
+    return { profile, role }
+}
 
 export async function login(formData: FormData) {
     const supabase = await createClient()
@@ -25,6 +32,7 @@ export async function login(formData: FormData) {
 }
 
 export async function signup(formData: FormData) {
+    const { profile: callerProfile } = await requireAdmin()
     const supabaseAdmin = await createAdminClient()
 
     const email = formData.get('email') as string
@@ -32,7 +40,9 @@ export async function signup(formData: FormData) {
     const firstName = formData.get('firstName') as string
     const lastName = formData.get('lastName') as string
     const phone = formData.get('phone') as string
-    const role = formData.get('role') as string || 'member'
+    const role = normalizeAdminRole({ Role: formData.get('role') ?? 'member' })
+    if (!role) return { error: 'Choose a valid role.' }
+    const roleColumn = Object.hasOwn(callerProfile, 'Role') ? 'Role' : 'role'
     const avatarFile = formData.get('avatar') as File | null
 
     let avatarUrl = null
@@ -41,7 +51,7 @@ export async function signup(formData: FormData) {
         const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`
         const filePath = `avatars/${fileName}`
 
-        const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
+        const { error: uploadError } = await supabaseAdmin.storage
             .from('admin_assets')
             .upload(filePath, avatarFile)
 
@@ -74,7 +84,7 @@ export async function signup(formData: FormData) {
                 first_name: firstName,
                 last_name: lastName,
                 phone: phone,
-                Role: role,
+                [roleColumn]: role,
                 avatar_url: avatarUrl,
                 is_active: true
             }])
@@ -84,12 +94,9 @@ export async function signup(formData: FormData) {
         }
     }
 
-    // After creation, log in the user using regular client
-    const supabase = await createClient()
-    await supabase.auth.signInWithPassword({ email, password })
-
     revalidatePath('/admin', 'layout')
-    redirect('/admin')
+    revalidatePath('/admin/team')
+    return { success: true }
 }
 
 export async function logout() {
@@ -100,10 +107,8 @@ export async function logout() {
 }
 
 export async function getAdmins() {
-    const supabase = await createClient()
-    const { data: userData } = await supabase.auth.getUser()
-    const user = userData?.user
-    if (!user) throw new Error('Unauthorized')
+    await requireAdmin()
+    const supabase = await createAdminClient()
 
     const { data, error } = await supabase
         .from('admins')
@@ -129,9 +134,7 @@ export async function getCrewMembers() {
 }
 
 export async function toggleAdminStatus(id: string, isActive: boolean) {
-    const supabase = await createClient()
-    const { data: userData } = await supabase.auth.getUser()
-    if (!userData?.user) throw new Error('Unauthorized')
+    await requireAdmin()
 
     const supabaseAdmin = await createAdminClient()
     const { error } = await supabaseAdmin
@@ -146,22 +149,27 @@ export async function toggleAdminStatus(id: string, isActive: boolean) {
 }
 
 export async function updateAdmin(id: string, formData: FormData) {
-    const supabase = await createClient()
-    const { data: userData } = await supabase.auth.getUser()
-    const user = userData?.user
-    if (!user) throw new Error('Unauthorized')
+    const { user, profile, role: callerRole } = await getCurrentProfile()
+    if (!user || !profile || !callerRole) throw new Error('Unauthorized')
+    const isOwnProfile = id === profile.id
+    if (!isOwnProfile && callerRole !== 'admin') throw new Error('Unauthorized')
 
     const firstName = formData.get('firstName') as string
     const lastName = formData.get('lastName') as string
     const phone = formData.get('phone') as string
-    const role = formData.get('role') as string
     const avatarFile = formData.get('avatar') as File | null
 
-    let updateData: any = {
+    const updateData: Record<string, unknown> = {
         first_name: firstName,
         last_name: lastName,
         phone: phone,
-        Role: role
+    }
+
+    // Personal profile edits never change authorization, even with a forged form.
+    if (!isOwnProfile && formData.has('role')) {
+        const role = normalizeAdminRole({ Role: formData.get('role') })
+        if (!role) return { error: 'Choose a valid role.' }
+        updateData[Object.hasOwn(profile, 'Role') ? 'Role' : 'role'] = role
     }
 
     if (avatarFile && avatarFile.size > 0) {
@@ -170,12 +178,12 @@ export async function updateAdmin(id: string, formData: FormData) {
         const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`
         const filePath = `avatars/${fileName}`
 
-        const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
+        const { error: uploadError } = await supabaseAdmin.storage
             .from('admin_assets')
             .upload(filePath, avatarFile)
 
         if (!uploadError) {
-            const { data: { publicUrl } } = supabase.storage
+            const { data: { publicUrl } } = supabaseAdmin.storage
                 .from('admin_assets')
                 .getPublicUrl(filePath)
             updateData.avatar_url = publicUrl
@@ -194,14 +202,11 @@ export async function updateAdmin(id: string, formData: FormData) {
 }
 
 export async function deleteAdmin(id: string) {
+    const { user: currentUser, profile } = await requireAdmin()
     const supabaseAdmin = await createAdminClient()
 
-    const { data: userData } = await supabaseAdmin.auth.getUser()
-    const currentUser = userData?.user
-    if (!currentUser) throw new Error('Unauthorized')
-
     // Don't allow self-deletion via dashboard
-    if (currentUser.id === id) return { error: "You cannot delete your own account." }
+    if (currentUser.id === id || profile.id === id) return { error: "You cannot delete your own account." }
 
     // Delete from auth (using admin privileges)
     const { error: authError } = await supabaseAdmin.auth.admin.deleteUser(id)
@@ -221,11 +226,7 @@ export async function deleteAdmin(id: string) {
 
 
 export async function uploadAsset(formData: FormData) {
-    const supabase = await createClient()
-
-    const { data: userData } = await supabase.auth.getUser()
-    const user = userData?.user
-    if (!user) throw new Error('Unauthorized')
+    const { user } = await requireAdmin()
 
     const file = formData.get('file') as File
     const name = formData.get('name') as string
@@ -240,7 +241,7 @@ export async function uploadAsset(formData: FormData) {
     const filePath = `${type}/${fileName}`
 
     const supabaseAdmin = await createAdminClient()
-    const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
+    const { error: uploadError } = await supabaseAdmin.storage
         .from('portfolio')
         .upload(filePath, file)
 
@@ -274,11 +275,7 @@ export async function uploadAsset(formData: FormData) {
 }
 
 export async function deleteAsset(id: string, storagePath: string) {
-    const supabase = await createClient()
-
-    const { data: userData } = await supabase.auth.getUser()
-    const user = userData?.user
-    if (!user) throw new Error('Unauthorized')
+    await requireAdmin()
 
     const supabaseAdmin = await createAdminClient()
 
@@ -307,10 +304,7 @@ export async function deleteAsset(id: string, storagePath: string) {
 }
 
 export async function updateAsset(id: string, name: string) {
-    const supabase = await createClient()
-    const { data: userData } = await supabase.auth.getUser()
-    const user = userData?.user
-    if (!user) throw new Error('Unauthorized')
+    await requireAdmin()
 
     const supabaseAdmin = await createAdminClient()
     const { error } = await supabaseAdmin
@@ -325,10 +319,7 @@ export async function updateAsset(id: string, name: string) {
 }
 
 export async function toggleAssetStatus(id: string, isActive: boolean) {
-    const supabase = await createClient()
-    const { data: userData } = await supabase.auth.getUser()
-    const user = userData?.user
-    if (!user) throw new Error('Unauthorized')
+    await requireAdmin()
 
     const supabaseAdmin = await createAdminClient()
     const { error } = await supabaseAdmin
@@ -371,10 +362,7 @@ export async function getAppSettings() {
 }
 
 export async function updateAppSettings(formData: FormData) {
-    const supabase = await createClient()
-    const { data: userData } = await supabase.auth.getUser()
-    const user = userData?.user
-    if (!user) throw new Error('Unauthorized')
+    const { user } = await requireAdmin()
 
     const logoFile = formData.get('logo') as File | null
     const founderFile = formData.get('founder') as File | null
@@ -384,7 +372,7 @@ export async function updateAppSettings(formData: FormData) {
     const emails = formData.getAll('founder_email') as string[]
     const contacts = formData.getAll('founder_contact') as string[]
 
-    const updateData: any = {
+    const updateData: Record<string, unknown> = {
         updated_by: user.id,
         updated_at: new Date().toISOString(),
         founder_address: founderAddress,
@@ -399,7 +387,7 @@ export async function updateAppSettings(formData: FormData) {
         const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`
         const filePath = `settings/${path}/${fileName}`
 
-        const { data, error } = await supabaseAdmin.storage
+        const { error } = await supabaseAdmin.storage
             .from('admin_assets')
             .upload(filePath, file)
 
@@ -441,8 +429,8 @@ export async function updateAppSettings(formData: FormData) {
         revalidatePath('/', 'layout')
         revalidatePath('/admin')
         return { success: true }
-    } catch (err: any) {
-        return { error: err.message }
+    } catch (err: unknown) {
+        return { error: err instanceof Error ? err.message : 'Failed to update application settings.' }
     }
 }
 
@@ -477,9 +465,8 @@ export async function submitContactForm(formData: FormData) {
 }
 
 export async function getContactSubmissions() {
-    const supabase = await createClient();
-    const { data: userData } = await supabase.auth.getUser();
-    if (!userData?.user) throw new Error('Unauthorized');
+    await requireAdmin();
+    const supabase = await createAdminClient();
 
     const { data, error } = await supabase
         .from('contact_submissions')
@@ -491,9 +478,8 @@ export async function getContactSubmissions() {
 }
 
 export async function deleteContactSubmission(id: string) {
-    const supabase = await createClient();
-    const { data: userData } = await supabase.auth.getUser();
-    if (!userData?.user) throw new Error('Unauthorized');
+    await requireAdmin();
+    const supabase = await createAdminClient();
 
     const { error } = await supabase
         .from('contact_submissions')
