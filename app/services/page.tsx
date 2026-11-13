@@ -1,4 +1,7 @@
 import { Play } from "lucide-react";
+import { createPageMetadata } from "@/lib/seo";
+
+export const metadata = createPageMetadata('/services');
 
 export default function ServicesPage() {
     const styles = [

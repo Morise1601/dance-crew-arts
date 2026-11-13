@@ -1,5 +1,8 @@
 import Link from "next/link";
 import { ArrowRight, CalendarDays } from "lucide-react";
+import { createPageMetadata } from "@/lib/seo";
+
+export const metadata = createPageMetadata('/blog');
 
 export default function BlogPage() {
     const posts = [

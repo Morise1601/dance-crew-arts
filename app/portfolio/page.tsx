@@ -1,5 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import PortfolioClient from './PortfolioClient'
+import { createPageMetadata } from '@/lib/seo'
+
+export const metadata = createPageMetadata('/portfolio')
 
 export default async function PortfolioPage() {
     const supabase = await createClient()

@@ -1,27 +1,28 @@
 import type { Metadata } from "next";
-import { Montserrat, Cinzel } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { cn } from "@/lib/utils";
 import { getAppSettings } from "./admin/actions";
+import { createRootMetadata, getSiteStructuredData, siteViewport } from "@/lib/seo";
 
-const montserrat = Montserrat({
-  subsets: ["latin"],
+const montserrat = localFont({
+  src: "./fonts/montserrat-latin.woff2",
   variable: "--font-montserrat",
-  weight: ["300", "400", "500", "600", "700", "800", "900"],
+  weight: "300 900",
+  display: "swap",
 });
 
-const cinzel = Cinzel({
-  subsets: ["latin"],
+const cinzel = localFont({
+  src: "./fonts/cinzel-latin.woff2",
   variable: "--font-cinzel",
-  weight: ["400", "500", "600", "700", "800", "900"],
+  weight: "400 900",
+  display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: "D'Art Crew | Dance • Rhythm • Technique",
-  description: "Unleash your rhythm at D'Art Crew. Book classes, connect with instructors, and transform your artistic dance journey.",
-};
+export const metadata: Metadata = createRootMetadata();
+export const viewport = siteViewport;
 
 import { Toaster } from "sonner";
 
@@ -36,6 +37,7 @@ export default async function RootLayout({
   return (
     <html lang="en" className={cn("dark scroll-smooth", montserrat.variable, cinzel.variable)}>
       <body className="antialiased min-h-screen bg-background text-foreground flex flex-col font-sans overflow-x-hidden">
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(getSiteStructuredData()).replace(/</g, "\\u003c") }} />
         <Toaster position="top-center" richColors />
         <Navbar logoUrl={logoUrl} />
         <main className="flex-1 flex flex-col">

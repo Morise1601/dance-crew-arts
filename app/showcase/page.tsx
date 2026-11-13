@@ -1,13 +1,10 @@
-import type { Metadata } from "next";
+import { createPageMetadata } from "@/lib/seo";
 import { redirect } from "next/navigation";
 import { getPublicShowcase } from "@/lib/showcase/queries";
 import { buildShowcaseCategoryHref, getShowcaseCategories, resolveShowcaseCategory } from "@/lib/showcase/categories";
 import ShowcaseClient from "./showcase-client";
 
-export const metadata: Metadata = {
-  title: "Showcase | D'Art Crew",
-  description: "Step into the world of D'Art Crew. Explore our art forms through photographs and performances.",
-};
+export const metadata = createPageMetadata('/showcase');
 
 export const dynamic = "force-dynamic";
 

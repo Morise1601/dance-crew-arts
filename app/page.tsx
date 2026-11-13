@@ -1,5 +1,8 @@
 import { getAppSettings, getCrewMembers, getPortfolioAssets } from "./admin/actions";
 import HomeClient from "@/components/HomeClient";
+import { createPageMetadata } from "@/lib/seo";
+
+export const metadata = createPageMetadata('/');
 
 export default async function Home() {
     const { data: settings } = await getAppSettings();
