@@ -1,5 +1,8 @@
 import { getAppSettings } from "../admin/actions";
 import AboutClient from "@/components/AboutClient";
+import { createPageMetadata } from "@/lib/seo";
+
+export const metadata = createPageMetadata('/about');
 
 export default async function AboutPage() {
     const { data: settings } = await getAppSettings();

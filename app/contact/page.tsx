@@ -1,6 +1,9 @@
 import { Mail, MapPin, Phone, ArrowUpRight } from "lucide-react";
 import { getAppSettings } from "@/app/admin/actions";
 import { ContactForm } from "./ContactForm";
+import { createPageMetadata } from "@/lib/seo";
+
+export const metadata = createPageMetadata('/contact');
 
 export default async function ContactPage() {
     const { data: settings } = await getAppSettings();
