@@ -1,4 +1,5 @@
-import { createServerClient } from '@supabase/ssr'
+import 'server-only'
+import { createClient } from '@supabase/supabase-js'
 
 /**
  * Creates a Supabase client with the SERVICE_ROLE_KEY.
@@ -6,19 +7,14 @@ import { createServerClient } from '@supabase/ssr'
  * ONLY use this in Server Actions or API routes after verifying the user's authorization.
  */
 export async function createAdminClient() {
-    return createServerClient(
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY
+    if (!serviceRoleKey) throw new Error('Supabase service role key is not configured.')
+
+    return createClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY!,
+        serviceRoleKey,
         {
-            cookies: {
-                getAll() {
-                    return []
-                },
-                setAll() {
-                    // Service role client doesn't need to set cookies for auth persistence
-                    // as it uses the secret key directly.
-                },
-            },
+            auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
         }
     )
 }

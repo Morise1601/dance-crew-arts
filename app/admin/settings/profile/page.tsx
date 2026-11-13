@@ -1,25 +1,27 @@
-import { createClient } from '@/lib/supabase/server'
+import { getCurrentProfile } from '@/lib/auth/server'
 import { redirect } from 'next/navigation'
 import { AdminSidebar } from '../../components/AdminSidebar'
-import { UserCircle, Shield, Mail, Phone, Calendar, Fingerprint } from 'lucide-react'
+import { UserCircle, Shield, Mail, Calendar } from 'lucide-react'
 import ProfileSettingsForm from './ProfileSettingsForm'
 
 export default async function ProfileSettingsPage() {
-    const supabase = await createClient()
-    const { data: userData } = await supabase.auth.getUser()
-    const user = userData?.user
-    console.log('user', user)
+    const { user, profile: adminProfile, role, error } = await getCurrentProfile()
     if (!user) redirect('/admin')
 
-    const { data: adminProfile } = await supabase
-        .from('admins')
-        .select('*')
-        .eq('email', user.email)
-        .maybeSingle()
-    console.log('adminProfile', adminProfile)
+    if (!adminProfile || !role) {
+        return (
+            <div className="flex min-h-screen bg-[#050505] text-white">
+                <AdminSidebar initialProfile={null} />
+                <main className="flex-1 px-6 pt-24 lg:p-12">
+                    <h1 className="text-2xl font-serif">Profile unavailable</h1>
+                    <p className="mt-4 text-gray-400">{error || 'Your account does not have an active crew profile. Contact your administrator for access.'}</p>
+                </main>
+            </div>
+        )
+    }
     return (
         <div className="flex min-h-screen bg-[#050505] text-white selection:bg-primary/30">
-            <AdminSidebar />
+            <AdminSidebar initialProfile={adminProfile} />
 
             <main className="flex-1 pt-24 lg:pt-0 overflow-x-hidden">
                 <div className="p-6 lg:p-12 max-w-4xl mx-auto">
@@ -65,7 +67,7 @@ export default async function ProfileSettingsPage() {
                                     {adminProfile?.first_name} {adminProfile?.last_name}
                                 </h3>
                                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20">
-                                    <span className="text-[9px] font-bold uppercase tracking-widest text-primary">{(adminProfile?.Role || adminProfile?.role)}</span>
+                                    <span className="text-[9px] font-bold uppercase tracking-widest text-primary">{role}</span>
                                 </div>
 
                                 <div className="mt-8 pt-8 border-t border-white/5 space-y-4 text-left">
@@ -75,7 +77,7 @@ export default async function ProfileSettingsPage() {
                                     </div>
                                     <div className="flex items-center gap-3 text-gray-500">
                                         <Calendar className="w-4 h-4 text-primary/40 shrink-0" />
-                                        <span className="text-[10px] font-bold uppercase tracking-widest">Joined {new Date(adminProfile?.created_at).toLocaleDateString()}</span>
+                                        <span className="text-[10px] font-bold uppercase tracking-widest">Joined {adminProfile.created_at ? new Date(adminProfile.created_at).toLocaleDateString() : '—'}</span>
                                     </div>
                                 </div>
                             </div>

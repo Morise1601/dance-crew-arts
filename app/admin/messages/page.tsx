@@ -2,23 +2,15 @@ import { getContactSubmissions } from "../actions";
 import MessagesClient from "./MessagesClient";
 import { Mail, Sparkles } from "lucide-react";
 import { AdminSidebar } from "../components/AdminSidebar";
-import { createClient } from "@/lib/supabase/server";
+import { getCurrentProfile } from "@/lib/auth/server";
 import { redirect } from "next/navigation";
 
 export default async function AdminMessagesPage() {
-    const supabase = await createClient();
-    const { data: userData } = await supabase.auth.getUser();
-    const user = userData?.user;
+    const { user, profile: adminProfile, role } = await getCurrentProfile();
 
     if (!user) redirect('/admin');
 
-    const { data: adminProfile } = await supabase
-        .from('admins')
-        .select('*')
-        .eq('email', user.email)
-        .maybeSingle();
-
-    if (((adminProfile as any)?.Role || (adminProfile as any)?.role || '').toLowerCase() !== 'admin') {
+    if (role !== 'admin') {
         redirect('/admin/settings/profile');
     }
 
@@ -27,7 +19,7 @@ export default async function AdminMessagesPage() {
     if (error) {
         return (
             <div className="flex min-h-screen bg-[#050505] text-white">
-                <AdminSidebar />
+                <AdminSidebar initialProfile={adminProfile} />
                 <main className="flex-1 p-8 pt-24 lg:pt-8 overflow-x-hidden text-center">
                     <div className="bg-red-500/10 border border-red-500/20 p-8 rounded-3xl text-red-500 font-bold uppercase tracking-widest text-xs max-w-2xl mx-auto shadow-2xl">
                         Error loading messages: {error}
@@ -39,7 +31,7 @@ export default async function AdminMessagesPage() {
 
     return (
         <div className="flex min-h-screen bg-[#050505] text-white selection:bg-primary/30">
-            <AdminSidebar />
+            <AdminSidebar initialProfile={adminProfile} />
 
             <main className="flex-1 pt-24 lg:pt-0 overflow-x-hidden">
                 {/* Background Decor */}

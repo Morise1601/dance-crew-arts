@@ -1,13 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-// Protected admin sub-routes (NOT the login page itself)
-const PROTECTED_ADMIN_ROUTES = [
-    '/admin/dashboard',
-    '/admin/team',
-    '/admin/portfolio',
-]
-
 export async function updateSession(request: NextRequest) {
     let supabaseResponse = NextResponse.next({
         request,
@@ -40,15 +33,16 @@ export async function updateSession(request: NextRequest) {
 
     const pathname = request.nextUrl.pathname
 
-    // If user is NOT logged in and tries to access a protected admin sub-route → redirect to home
-    const isProtectedAdminRoute = PROTECTED_ADMIN_ROUTES.some(route =>
-        pathname === route || pathname.startsWith(route + '/')
-    )
+    // Every admin sub-route needs a session, including settings and new modules.
+    // Role authorization is enforced again by server pages and server actions.
+    const isProtectedAdminRoute = pathname.startsWith('/admin/')
 
     if (!user && isProtectedAdminRoute) {
-        const homeUrl = request.nextUrl.clone()
-        homeUrl.pathname = '/'
-        return NextResponse.redirect(homeUrl)
+        const loginUrl = request.nextUrl.clone()
+        loginUrl.pathname = '/admin'
+        const response = NextResponse.redirect(loginUrl)
+        supabaseResponse.cookies.getAll().forEach(cookie => response.cookies.set(cookie))
+        return response
     }
 
     return supabaseResponse

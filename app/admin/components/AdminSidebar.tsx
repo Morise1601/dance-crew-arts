@@ -2,74 +2,47 @@
 
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
-import { FolderOpen, Users, LayoutDashboard, Home, LogOut, Menu, X, Settings, UserCircle, Shield, Mail } from 'lucide-react'
-import { logout } from '../actions'
+import { usePathname } from 'next/navigation'
+import { FolderOpen, Users, LayoutDashboard, Home, LogOut, Menu, X, Settings, UserCircle, Mail, QrCode, type LucideIcon } from 'lucide-react'
+import { logout, getSidebarProfile, getAppSettings } from '../actions'
 import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
 import Logo from '@/public/D_arts_crew.png'
-import { createClient } from '@/lib/supabase/client'
-import { getAppSettings } from '../actions'
+import { normalizeAdminRole, type AdminProfile, type AdminRole } from '@/lib/auth/roles'
+import { getAdminNavigation } from '@/lib/auth/navigation'
 
-export function AdminSidebar() {
+const icons: Record<string, LucideIcon> = {
+    overview: LayoutDashboard, messages: Mail, team: Users, portfolio: FolderOpen,
+    qr: QrCode, profile: UserCircle, settings: Settings,
+}
+
+export function AdminSidebar({ initialProfile }: { initialProfile?: AdminProfile | null } = {}) {
     const pathname = usePathname()
-    const router = useRouter()
     const [mobileOpen, setMobileOpen] = useState(false)
-    const [adminProfile, setAdminProfile] = useState<any>(null)
-    const [settings, setSettings] = useState<any>(null)
-    const [loading, setLoading] = useState(true)
-
-    const supabase = createClient()
+    const [role, setRole] = useState<AdminRole>(normalizeAdminRole(initialProfile))
+    const [settings, setSettings] = useState<{ logo_url?: string } | null>(null)
+    const [loading, setLoading] = useState(initialProfile === undefined)
 
     useEffect(() => {
+        let cancelled = false
         async function getInitialData() {
-            // Get Profile
-            const { data: userData } = await supabase.auth.getUser()
-            const user = userData?.user
-            if (user) {
-                const { data: profile } = await supabase
-                    .from('admins')
-                    .select('*')
-                    .eq('email', user.email)
-                    .maybeSingle()
-
-                if (profile) {
-                    setAdminProfile(profile)
+            try {
+                const [access, appSettings] = await Promise.all([getSidebarProfile(), getAppSettings()])
+                if (!cancelled) {
+                    setRole(access.role)
+                    setSettings(appSettings.data ?? null)
                 }
-
-                // Redirect member to profile settings if on restricted page
-                const userRole = (profile?.Role || '').toLowerCase()
-                if (userRole === 'member') {
-                    const restrictedPaths = ['/admin/dashboard', '/admin/team', '/admin/portfolio', '/admin/settings/app', '/admin/messages']
-                    if (restrictedPaths.some(p => pathname.startsWith(p))) {
-                        router.push('/admin/settings/profile')
-                    }
-                }
+            } catch {
+                if (!cancelled) setRole(null)
+            } finally {
+                if (!cancelled) setLoading(false)
             }
-
-            // Get Settings for Logo
-            const { data: appSettings } = await getAppSettings()
-            if (appSettings) {
-                setSettings(appSettings)
-            }
-
-            setLoading(false)
         }
         getInitialData()
+        return () => { cancelled = true }
     }, [pathname])
 
-    const isAdmin = (adminProfile?.Role || '').toLowerCase() === 'admin'
-
-    const navItems = [
-        ...(isAdmin ? [
-            { href: '/admin/dashboard', label: 'Overview', icon: LayoutDashboard },
-            { href: '/admin/messages', label: 'Messages', icon: Mail },
-            { href: '/admin/team', label: 'Team Members', icon: Users },
-            { href: '/admin/portfolio', label: 'My Portfolio', icon: FolderOpen },
-        ] : []),
-        { href: '/admin/settings/profile', label: 'Profile Settings', icon: UserCircle },
-        ...(isAdmin ? [{ href: '/admin/settings/app', label: 'App Settings', icon: Settings }] : []),
-    ]
+    const navItems = getAdminNavigation(role).map(item => ({ ...item, icon: icons[item.icon] }))
 
     return (
         <>
